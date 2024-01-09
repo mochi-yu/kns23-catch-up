@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  title: kns23-catch-up
+  version: '0.1'
+  description: '高校の同窓会に向けて、各自の近況を報告できるSNSのAPI仕様'
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: 'http://127.0.0.1:8085/v1'
+    description: ローカル環境
+  - url: 'https://example1.com'
+    description: STG環境
+
+paths:
+  # ヘルスチェック
+  '/health':
+    $ref: './paths/health.yaml'
+
+components:
+  securitySchemes:
+    loginAuth:
+      $ref: './components/securitySchemes/loginAuth.yaml'
+
+  schemas:
+    Error:
+      $ref: './components/schemas/Error.yaml'
+
+  responses:
+    GenericError:
+      $ref: './components/responses/GenericError.yaml'
+    ForbiddenError:
+      $ref: './components/responses/ForbiddenError.yaml'
+    UnauthorizedError:
+      $ref: './components/responses/UnauthorizedError.yaml'
+
+tags:
+  - name: Admin
+    description: 管理者ツール用のエンドポイント
+  - name: User
+    description: ユーザに関するエンドポイント
+  - name: Post
+    description: 投稿に関するエンドポイント
