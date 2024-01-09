@@ -1,8 +1,7 @@
 post:
   summary: 現在の表示状態を取得する
   operationId: 'get_status'
-  security:
-    - loginAuth: []
+  security: []
   tags:
     - User
   requestBody:
