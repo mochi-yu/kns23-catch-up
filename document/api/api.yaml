@@ -1,0 +1,963 @@
+openapi: 3.0.0
+info:
+  title: kns23-catch-up
+  version: '0.1'
+  description: 高校の同窓会に向けて、各自の近況を報告できるSNSのAPI仕様
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://127.0.0.1:8085/v1
+    description: ローカル環境
+  - url: https://example1.com
+    description: STG環境
+tags:
+  - name: User
+    description: ユーザに関するエンドポイント
+  - name: Post
+    description: 投稿に関するエンドポイント
+  - name: Admin
+    description: 管理者ツール用のエンドポイント
+paths:
+  /health:
+    get:
+      summary: エンドポイントのGETのテスト
+      operationId: test_get
+      description: エンドポイントのGETのテスト
+      security: []
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  test:
+                    type: string
+        '400':
+          $ref: '#/components/responses/GenericError'
+    post:
+      summary: エンドポイントのPOSTのテスト
+      operationId: test_post
+      security: []
+      tags:
+        - Admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: エンドポイントのPOSTのテスト
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  greet:
+                    type: string
+        '400':
+          $ref: '#/components/responses/GenericError'
+  /register:
+    post:
+      summary: 現在の表示状態を取得する
+      operationId: get_status
+      security: []
+      tags:
+        - User
+      requestBody:
+        description: 登録フォームの入力情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+                  user_name:
+                    type: string
+                  class_id:
+                    type: string
+                  mail_address:
+                    type: string
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /users:
+    get:
+      summary: ユーザ一覧を取得する
+      operationId: get_user_list
+      description: ユーザの一覧を取得する。条件はクエリパラメータで指定する
+      security:
+        - loginAuth: []
+      tags:
+        - User
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: 取得する件数を指定する
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: 取得時のオフセットを指定する
+        - in: query
+          name: class_id
+          schema:
+            type: integer
+          description: クラスで絞り込む
+        - in: query
+          name: order
+          schema:
+            type: string
+          description: |
+            並び順を指定する。
+             - createなら作成順
+             - updateなら更新順
+             - idならユーザID順
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: trueなら並び順を逆順にする
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /users/{user_id}:
+    get:
+      summary: ユーザ情報を取得する
+      operationId: get_user
+      description: ユーザIDで指定したユーザの情報を取得する
+      security:
+        - loginAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+          description: 取得するユーザのユーザID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      summary: ユーザ情報の更新
+      operationId: update_user_info
+      description: ユーザIDで指定したユーザの情報を更新する
+      security:
+        - loginAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+          description: 取得するユーザのユーザID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: 更新したプロフィールをレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /users/{user_id}/posts:
+    get:
+      summary: ユーザの投稿の一覧を取得する
+      operationId: get_user_posts
+      description: ユーザIDで指定したユーザの投稿一覧を取得する
+      security:
+        - loginAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+          description: 取得するユーザのユーザID
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: 取得する件数を指定する
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: 取得時のオフセットを指定する
+        - in: query
+          name: order
+          schema:
+            type: string
+          description: |
+            並び順を指定する。
+             - postなら投稿順
+             - reactionならリアクション数順
+             - commentならコメント数順
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: trueなら並び順を逆順にする
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /users/{user_id}/reactions:
+    get:
+      summary: ユーザがリアクションをつけた投稿の一覧を取得する
+      operationId: get_user_reactions
+      description: ユーザIDで指定したユーザがリアクションをつけた投稿の情報を取得する
+      security:
+        - loginAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+          description: 取得するユーザのユーザID
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: 取得する件数を指定する
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: 取得時のオフセットを指定する
+        - in: query
+          name: order
+          schema:
+            type: string
+          description: |
+            並び順を指定する。
+             - postなら投稿順
+             - reactionならリアクション数順
+             - commentならコメント数順
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: trueなら並び順を逆順にする
+        - in: query
+          name: summary
+          schema:
+            type: boolean
+          description: trueなら投稿IDのみをレスポンスする
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /users/{user_id}/comments:
+    get:
+      summary: ユーザがコメントをつけた投稿の一覧を取得
+      operationId: get_user_comments
+      description: ユーザIDで指定したユーザがコメントをつけた投稿の一覧を取得する
+      security:
+        - loginAuth: []
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: string
+          description: 取得するユーザのユーザID
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: 取得する件数を指定する
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: 取得時のオフセットを指定する
+        - in: query
+          name: order
+          schema:
+            type: string
+          description: |
+            並び順を指定する。
+             - postなら投稿順
+             - reactionならリアクション数順
+             - commentならコメント数順
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: trueなら並び順を逆順にする
+        - in: query
+          name: summary
+          schema:
+            type: boolean
+          description: trueなら投稿IDのみをレスポンスする
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /posts:
+    get:
+      summary: 投稿の一覧を取得する
+      operationId: get_post_list
+      description: 投稿の一覧を取得する。絞り込みはクエリパラメータにより行う。
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: 取得する件数を指定する
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: 取得時のオフセットを指定する
+        - in: query
+          name: class_id
+          schema:
+            type: integer
+          description: クラスで絞り込む
+        - in: query
+          name: channel_id
+          schema:
+            type: integer
+          description: チャンネルで絞り込む
+        - in: query
+          name: order
+          schema:
+            type: string
+          description: |
+            並び順を指定する。
+             - postなら投稿順
+             - reactionならリアクション数順
+             - commentならコメント数順
+        - in: query
+          name: reverse
+          schema:
+            type: boolean
+          description: trueなら並び順を逆順にする
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: 新規投稿
+      operationId: post_new_post
+      description: 新しく投稿を投稿する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Post'
+      responses:
+        '201':
+          description: 投稿したポストをレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posted:
+                    $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /posts/{post_id}:
+    get:
+      summary: 投稿を取得
+      operationId: get_post
+      description: post_idで指定した投稿の情報を取得する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+          description: 取得する投稿の投稿ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      summary: 投稿内容を編集
+      operationId: update_post
+      description: post_idで指定した投稿の情報を更新する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+          description: 取得する投稿の投稿ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: 投稿したポストをレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      summary: 投稿を削除する
+      operationId: delete_post
+      description: post_idで指定した投稿を削除する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+          description: 対象の投稿の投稿ID
+      responses:
+        '200':
+          description: 削除した投稿のIDをレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deletedPostID:
+                    type: string
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /posts/{post_id}/reactions:
+    get:
+      summary: 投稿のリアクションを取得する
+      operationId: get_post_reactions
+      description: post_idで指定した投稿のリアクションを取得する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+          description: 取得する投稿の投稿ID
+        - in: query
+          name: summary
+          schema:
+            type: boolean
+          description: 概要を取得するか指定する。trueの場合、ユーザ情報をレスポンスしない
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Reaction'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: 投稿にリアクションをつける
+      operationId: post_reaction
+      description: post_idで指定した投稿のリアクションを取得する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+          description: 該当する投稿の投稿ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reactionID:
+                  description: リアクションのID
+                  type: string
+      responses:
+        '201':
+          description: 追加したリアクションをレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  addedReaction:
+                    $ref: '#/components/schemas/Reaction'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /posts/{post_id}/reactions/{reaction_id}:
+    delete:
+      summary: リアクションを削除する
+      operationId: delete_reaction
+      description: post_idで指定した投稿のリアクションを削除する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+          description: 対象の投稿の投稿ID
+        - in: path
+          name: reaction_id
+          required: true
+          schema:
+            type: string
+          description: 対象のリアクションのID
+      responses:
+        '200':
+          description: 削除したリアクションの内容をレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deletedReaction:
+                    $ref: '#/components/schemas/Reaction'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /posts/{post_id}/comments:
+    get:
+      summary: 指定した投稿のコメントを取得する
+      operationId: get_post_comment
+      description: post_idで指定した投稿のコメントを取得する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+          description: 取得する投稿の投稿ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Comment'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      summary: 投稿にコメントをつける
+      operationId: post_comment
+      description: post_idで指定した投稿にコメントをつける
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: post_id
+          required: true
+          schema:
+            type: string
+          description: 取得する投稿の投稿ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parentCommentID:
+                  description: 親コメントがある場合はそのコメントID
+                  type: string
+                comment:
+                  $ref: '#/components/schemas/Comment'
+      responses:
+        '201':
+          description: 投稿したコメントをレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  postedComment:
+                    $ref: '#/components/schemas/Comment'
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+  /comments/{comment_id}:
+    delete:
+      summary: コメントを削除する
+      operationId: delete_comment
+      description: comment_idで指定した投稿のコメントを削除する
+      security:
+        - loginAuth: []
+      tags:
+        - Post
+      parameters:
+        - in: path
+          name: comment_id
+          required: true
+          schema:
+            type: string
+          description: 対象のコメントのID
+      responses:
+        '200':
+          description: 削除したコメントのIDをレスポンス
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deletedCommentID:
+                    type: string
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+components:
+  securitySchemes:
+    loginAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    User:
+      type: object
+      properties:
+        userID:
+          description: ユーザID
+          type: string
+        displayName:
+          description: 表示名
+          type: string
+        userName:
+          description: ユーザ名
+          type: string
+        classID:
+          description: クラスID
+          type: string
+        mailAddress:
+          description: 登録メールアドレス
+          type: string
+        isAdmin:
+          description: 管理者かどうか
+          type: boolean
+        isTeacher:
+          description: 先生かどうか
+          type: boolean
+        createdAt:
+          description: アカウント作成日時
+          type: integer
+          format: int64
+        updatedAt:
+          description: 更新日時
+          type: integer
+          format: int64
+    Post:
+      type: object
+      properties:
+        postID:
+          description: 投稿ID
+          type: string
+        author:
+          description: 投稿者の情報
+          type: object
+          $ref: '#/components/schemas/User'
+        channelID:
+          description: チャンネルID
+          type: integer
+        content:
+          description: 投稿内容
+          type: string
+        postedAt:
+          description: 投稿日時
+          type: integer
+        updatedAt:
+          description: 編集日時
+          type: integer
+        images:
+          description: 画像名のリスト
+          type: array
+          items:
+            type: string
+        reactions:
+          description: リアクションのリスト
+          type: array
+          items:
+            $ref: '#/components/schemas/Reaction'
+        comments:
+          description: コメントのリスト
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    Comment:
+      type: object
+      properties:
+        commentID:
+          description: コメントのID
+          type: string
+        author:
+          description: コメントの投稿者
+          type: object
+          $ref: '#/components/schemas/User'
+        content:
+          description: コメント内容
+          type: integer
+        childComment:
+          description: 子コメント（自己参照ができないが、コメントが入れ子になるイメージ）
+          type: object
+    Reaction:
+      type: object
+      properties:
+        reactionID:
+          description: リアクションID
+          type: integer
+        count:
+          description: リアクション数
+          type: integer
+        users:
+          description: リアクションしたユーザの情報
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        isReact:
+          description: 当該ユーザがこのポストにリアクションをつけているかのフラグ
+          type: boolean
+  responses:
+    GenericError:
+      description: 通常のクライエントエラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ForbiddenError:
+      description: 権限がないユーザからのリクエストに対するエラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnauthorizedError:
+      description: 認証されていないユーザからのリクエストに対するエラー
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
