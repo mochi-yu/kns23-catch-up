@@ -7,8 +7,6 @@
 ## ER図
 
 ```mermaid
-
-%% ユーザー
 erDiagram
   %% モデル
   users {
