@@ -1,0 +1,36 @@
+post:
+  summary: 現在の表示状態を取得する
+  operationId: 'get_status'
+  security:
+    - loginAuth: []
+  tags:
+    - User
+  requestBody:
+    description: 登録フォームの入力情報
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../index.yaml#/components/schemas/User'
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user_id:
+                type: string
+              user_name:
+                type: string
+              class_id:
+                type: string
+              mail_address:
+                type: string
+    '400':
+      $ref: '../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../index.yaml#/components/responses/UnauthorizedError'

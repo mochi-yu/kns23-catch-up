@@ -1,0 +1,20 @@
+type: object
+properties:
+  userID:
+    type: string
+  userName:
+    type: string
+  classID:
+    type: string
+  mailAddress:
+    type: string
+  isAdmin:
+    type: bool
+  isTeacher:
+    type: bool
+  createdAt:
+    type: integer
+    format: int64
+  updatedAt:
+    type: integer
+    format: int64
