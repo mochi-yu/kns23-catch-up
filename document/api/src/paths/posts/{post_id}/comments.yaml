@@ -1,0 +1,75 @@
+get:
+  summary: 指定した投稿のコメントを取得する
+  operationId: get_post_comment
+  description: post_idで指定した投稿のコメントを取得する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: post_id
+      required: true
+      schema: 
+        type: string
+      description: 取得する投稿の投稿ID
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              comments:
+                type: array
+                items:
+                  $ref: '../../../index.yaml#/components/schemas/Comment'
+    '400':
+      $ref: '../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../index.yaml#/components/responses/UnauthorizedError'
+post:
+  summary: 投稿にコメントをつける
+  operationId: post_comment
+  description: post_idで指定した投稿にコメントをつける
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: post_id
+      required: true
+      schema: 
+        type: string
+      description: 取得する投稿の投稿ID
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            parentCommentID:
+              description: 親コメントがある場合はそのコメントID
+              type: string
+            comment:
+              $ref: '../../../index.yaml#/components/schemas/Comment'
+  responses:
+    '201':
+      description: 投稿したコメントをレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              postedComment:
+                $ref: '../../../index.yaml#/components/schemas/Comment'
+    '400':
+      $ref: '../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../index.yaml#/components/responses/UnauthorizedError'

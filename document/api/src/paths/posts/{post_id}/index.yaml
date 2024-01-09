@@ -1,0 +1,99 @@
+get:
+  summary: 投稿を取得
+  operationId: get_post
+  description: post_idで指定した投稿の情報を取得する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: post_id
+      required: true
+      schema: 
+        type: string
+      description: 取得する投稿の投稿ID
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              posts:
+                $ref: '../../../index.yaml#/components/schemas/Post'
+    '400':
+      $ref: '../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../index.yaml#/components/responses/UnauthorizedError'
+put:
+  summary: 投稿内容を編集
+  operationId: update_post
+  description: post_idで指定した投稿の情報を更新する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: post_id
+      required: true
+      schema: 
+        type: string
+      description: 取得する投稿の投稿ID
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          $ref: '../../../index.yaml#/components/schemas/Post'
+  responses:
+    '200':
+      description: 投稿したポストをレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              updated:
+                $ref: '../../../index.yaml#/components/schemas/Post'
+    '400':
+      $ref: '../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../index.yaml#/components/responses/UnauthorizedError'
+delete:
+  summary: 投稿を削除する
+  operationId: delete_post
+  description: post_idで指定した投稿を削除する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: post_id
+      required: true
+      schema: 
+        type: string
+      description: 対象の投稿の投稿ID
+  responses:
+    '200':
+      description: 削除した投稿のIDをレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              deletedPostID:
+                type: string
+    '400':
+      $ref: '../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../index.yaml#/components/responses/UnauthorizedError'

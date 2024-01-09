@@ -1,0 +1,91 @@
+get:
+  summary: 投稿の一覧を取得する
+  operationId: get_post_list
+  description: 投稿の一覧を取得する。絞り込みはクエリパラメータにより行う。
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: query
+      name: limit
+      schema: 
+        type: integer
+      description: 取得する件数を指定する
+    - in: query
+      name: offset
+      schema: 
+        type: integer
+      description: 取得時のオフセットを指定する
+    - in: query
+      name: class_id
+      schema: 
+        type: integer
+      description: クラスで絞り込む
+    - in: query
+      name: channel_id
+      schema: 
+        type: integer
+      description: チャンネルで絞り込む
+    - in: query
+      name: order
+      schema: 
+        type: string
+      description: |
+        並び順を指定する。
+         - postなら投稿順
+         - reactionならリアクション数順
+         - commentならコメント数順
+    - in: query
+      name: reverse
+      schema: 
+        type: boolean
+      description: trueなら並び順を逆順にする
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              posts:
+                type: array
+                items:
+                  $ref: '../../index.yaml#/components/schemas/Post'
+    '400':
+      $ref: '../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../index.yaml#/components/responses/UnauthorizedError'
+post:
+  summary: 新規投稿
+  operationId: post_new_post
+  description: 新しく投稿を投稿する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          $ref: '../../index.yaml#/components/schemas/Post'
+  responses:
+    '201':
+      description: 投稿したポストをレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              posted:
+                $ref: '../../index.yaml#/components/schemas/Post'
+    '400':
+      $ref: '../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../index.yaml#/components/responses/UnauthorizedError'
