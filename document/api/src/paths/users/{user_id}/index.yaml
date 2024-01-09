@@ -30,7 +30,7 @@ get:
     '403':
       $ref: '../../../index.yaml#/components/responses/UnauthorizedError'
 put:
-  summary: ユーザ情報の取得
+  summary: ユーザ情報の更新
   operationId: update_user_info
   description: ユーザIDで指定したユーザの情報を更新する
   security:
