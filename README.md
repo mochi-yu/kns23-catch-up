@@ -9,7 +9,7 @@
 ![システム構成:2024/01/09](./document/images/system-architecture.jpg)
 
 ### DB設計
-- 参照: [api.yaml](./document/api/api.yaml)
+- 参照: [DB.md](./document/DB.md)
 
 ### API設計
-- 参照: [DB.md](./document/DB.md)
+- 参照: [api.yaml](./document/api/api.yaml)
