@@ -4,7 +4,7 @@ get:
   description: エンドポイントのGETのテスト
   security: []
   tags:
-    - System
+    - Admin
   responses:
     '200':
       description: OK
@@ -22,7 +22,7 @@ post:
   operationId: 'test_post'
   security: []
   tags:
-    - System
+    - Admin
   requestBody:
     content:
       application/json:

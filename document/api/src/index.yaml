@@ -73,9 +73,9 @@ components:
       $ref: './components/responses/UnauthorizedError.yaml'
 
 tags:
-  - name: Admin
-    description: 管理者ツール用のエンドポイント
   - name: User
     description: ユーザに関するエンドポイント
   - name: Post
     description: 投稿に関するエンドポイント
+  - name: Admin
+    description: 管理者ツール用のエンドポイント
