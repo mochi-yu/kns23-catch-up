@@ -1,5 +1,8 @@
 type: object
 properties:
+  commentID:
+    description: コメントのID
+    type: string
   author:
     description: コメントの投稿者
     type: object
@@ -9,6 +12,6 @@ properties:
     type: integer
   childComment:
     description: 子コメント（自己参照ができないが、コメントが入れ子になるイメージ）
-    type: array
-    items:
-      $ref: '../../index.yaml#/components/schemas/Comment'
+    type: object
+    # items:
+    #   $ref: '../../index.yaml#/components/schemas/Comment'

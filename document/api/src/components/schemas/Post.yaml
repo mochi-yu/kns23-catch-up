@@ -16,6 +16,9 @@ properties:
   postedAt:
     description: 投稿日時
     type: integer
+  updatedAt:
+    description: 編集日時
+    type: integer
   images:
     description: 画像名のリスト
     type: array

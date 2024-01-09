@@ -11,3 +11,6 @@ properties:
     type: array
     items:
       $ref: '../../index.yaml#/components/schemas/User'
+  isReact:
+    description: 当該ユーザがこのポストにリアクションをつけているかのフラグ 
+    type: boolean

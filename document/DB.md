@@ -33,6 +33,7 @@ erDiagram
 
     varchar content "投稿内容"
     bigint posted_at "投稿日時"
+    bigint updated_at "編集日時"
 
     array images "投稿の画像名: image"
     object reactions "リアクション: reaction"
@@ -49,6 +50,7 @@ erDiagram
   }
 
   comment {
+    varchar comment_id "コメントのID"
     varchar author_id "コメントした人のID"
     varchar content "コメント内容"
     array child_comment "子コメント（階層は2階層まで）"
