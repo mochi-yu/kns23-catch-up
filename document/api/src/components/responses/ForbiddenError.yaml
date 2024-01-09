@@ -1,0 +1,5 @@
+description: '権限がないユーザからのリクエストに対するエラー'
+content:
+  application/json:
+    schema:
+      $ref: '../../index.yaml#/components/schemas/Error'
