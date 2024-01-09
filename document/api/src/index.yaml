@@ -43,6 +43,10 @@ paths:
   '/posts/{post_id}/comments':
     $ref: './paths/posts/{post_id}/comments.yaml'
 
+  # コメントに関わるエンドポイント
+  '/comments/{comment_id}':
+    $ref: './paths/comments/{comment_id}.yaml'
+
 components:
   securitySchemes:
     loginAuth:
