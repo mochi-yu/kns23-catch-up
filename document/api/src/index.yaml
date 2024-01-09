@@ -39,7 +39,9 @@ paths:
   '/posts/{post_id}':
     $ref: './paths/posts/{post_id}/index.yaml'
   '/posts/{post_id}/reactions':
-    $ref: './paths/posts/{post_id}/reactions.yaml'
+    $ref: './paths/posts/{post_id}/reactions/index.yaml'
+  '/posts/{post_id}/reactions/{reaction_id}':
+    $ref: './paths/posts/{post_id}/reactions/{reaction_id}.yaml'
   '/posts/{post_id}/comments':
     $ref: './paths/posts/{post_id}/comments.yaml'
 

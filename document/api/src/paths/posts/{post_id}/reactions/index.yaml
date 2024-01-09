@@ -1,0 +1,78 @@
+get:
+  summary: 投稿のリアクションを取得する
+  operationId: get_post_reactions
+  description: post_idで指定した投稿のリアクションを取得する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: post_id
+      required: true
+      schema: 
+        type: string
+      description: 取得する投稿の投稿ID
+    - in: query
+      name: summary
+      schema: 
+        type: boolean
+      description: 概要を取得するか指定する。trueの場合、ユーザ情報をレスポンスしない
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              reactions:
+                type: array
+                items:
+                  $ref: '../../../../index.yaml#/components/schemas/Reaction'
+    '400':
+      $ref: '../../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../../index.yaml#/components/responses/UnauthorizedError'
+post:
+  summary: 投稿にリアクションをつける
+  operationId: post_reaction
+  description: post_idで指定した投稿のリアクションを取得する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: post_id
+      required: true
+      schema: 
+        type: string
+      description: 該当する投稿の投稿ID
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            reactionID:
+              description: リアクションのID
+              type: string
+  responses:
+    '201':
+      description: 追加したリアクションをレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              addedReaction:
+                $ref: '../../../../index.yaml#/components/schemas/Reaction'
+    '400':
+      $ref: '../../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../../index.yaml#/components/responses/UnauthorizedError'
