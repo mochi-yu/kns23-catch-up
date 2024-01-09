@@ -21,6 +21,28 @@ paths:
   '/register':
     $ref: './paths/register.yaml'
 
+  # ユーザに関わるエンドポイント 
+  '/users':
+    $ref: './paths/users/index.yaml'
+  '/users/{user_id}':
+    $ref: './paths/users/{user_id}/index.yaml'
+  '/users/{user_id}/posts':
+    $ref: './paths/users/{user_id}/posts.yaml'
+  '/users/{user_id}/reactions':
+    $ref: './paths/users/{user_id}/reactions.yaml'
+  '/users/{user_id}/comments':
+    $ref: './paths/users/{user_id}/comments.yaml'
+
+  # 投稿に関わるエンドポイント
+  '/posts':
+    $ref: './paths/posts/index.yaml'
+  '/posts/{post_id}':
+    $ref: './paths/posts/{post_id}/index.yaml'
+  '/posts/{post_id}/reactions':
+    $ref: './paths/posts/{post_id}/reactions.yaml'
+  '/posts/{post_id}/comments':
+    $ref: './paths/posts/{post_id}/comments.yaml'
+
 components:
   securitySchemes:
     loginAuth:
