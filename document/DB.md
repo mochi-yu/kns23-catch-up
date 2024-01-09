@@ -13,7 +13,8 @@ erDiagram
   %% モデル
   users {
     varchar id PK "ユーザID"
-    varchar user_name "ユーザ名"
+    varchar display_name "ユーザ名(表示名)"
+    varchar user_name "氏名"
     bigint class_id FK "所属クラス"
     varchar mail_address "登録メールアドレス"
     varchar firebase_id "Firebase上でのユーザID"
@@ -44,7 +45,7 @@ erDiagram
 
   reaction {
     varchar id PK "リアクションID"
-    int count "リアクション数"
+    array reaction_users "リアクションしたユーザの情報"
   }
 
   comment {
