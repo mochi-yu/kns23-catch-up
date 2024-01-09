@@ -53,6 +53,12 @@ components:
       $ref: './components/schemas/Error.yaml'
     User:
       $ref: './components/schemas/User.yaml'
+    Post:
+      $ref: './components/schemas/Post.yaml'
+    Comment:
+      $ref: './components/schemas/Comment.yaml'
+    Reaction:
+      $ref: './components/schemas/Reaction.yaml'
 
   responses:
     GenericError:

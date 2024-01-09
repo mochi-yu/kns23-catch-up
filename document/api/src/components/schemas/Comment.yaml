@@ -1,0 +1,14 @@
+type: object
+properties:
+  author:
+    description: コメントの投稿者
+    type: object
+    $ref: '../../index.yaml#/components/schemas/User'
+  content:
+    description: コメント内容
+    type: integer
+  childComment:
+    description: 子コメント（自己参照ができないが、コメントが入れ子になるイメージ）
+    type: array
+    items:
+      $ref: '../../index.yaml#/components/schemas/Comment'

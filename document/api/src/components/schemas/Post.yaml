@@ -1,0 +1,33 @@
+type: object
+properties:
+  postID:
+    description: 投稿ID
+    type: string
+  author:
+    description: 投稿者の情報
+    type: object
+    $ref: '../../index.yaml#/components/schemas/User'
+  channelID:
+    description: チャンネルID
+    type: integer
+  content:
+    description: 投稿内容
+    type: string
+  postedAt:
+    description: 投稿日時
+    type: integer
+  images:
+    description: 画像名のリスト
+    type: array
+    items:
+      type: string
+  reactions:
+    description: リアクションのリスト
+    type: array
+    items:
+      $ref: '../../index.yaml#/components/schemas/Reaction'
+  comments:
+    description: コメントのリスト
+    type: array
+    items:
+      $ref: '../../index.yaml#/components/schemas/Comment'
