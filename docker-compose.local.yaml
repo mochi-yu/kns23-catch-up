@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  webapi:
+    container_name: webapi-kns23
+    build:
+      dockerfile: ./api/Dockerfile.local
+      context: .
+    ports:
+      - ${API_PORT}:8080
+    # Important to bind/mount your codebase dir to /app dir for live reload
+    volumes:
+      - ./api:/app
+    depends_on:
+      - "dynamodb-local"
+    links:
+      - "dynamodb-local"
+
+  dynamodb-local:
+    container_name: dynamodb-kns23
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    ports:
+      - "${DYNAMO_DB_PORT}:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+    environment:
+      AWS_ACCESS_KEY_ID: ${DYNAMO_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${DYNAMO_SECRET_ACCESS_KEY}
+      REGION: ${DYNAMO_REGION}
+  
+  minio-stech:
+    image: minio/minio:latest
+    container_name: minio-kns23
+    ports:
+      - "${MINIO_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+    volumes:
+      - ./docker/minio/data:/data
+    command: "server /data --console-address :${MINIO_CONSOLE_PORT}"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
