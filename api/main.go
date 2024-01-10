@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -65,7 +67,13 @@ func setupRouter() *gin.Engine {
 	return r
 }
 
+var env = flag.String("env", "prod", "Execute environment")
+
 func main() {
+	// 実行環境をフラグから取得する
+	flag.Parse()
+	fmt.Println("env: ", *env)
+
 	r := setupRouter()
 
 	r.Run(":8080")
