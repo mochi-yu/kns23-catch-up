@@ -1,26 +1,40 @@
-package main
+package app
 
 import (
-	"flag"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mochi-yu/kns23-catch-up/app"
 )
 
-var db = make(map[string]string)
+type Server struct {
+	Engine *gin.Engine
+}
 
-func setupRouter() *gin.Engine {
+func NewServer() *Server {
 	r := gin.Default()
+	s := &Server{Engine: r}
 
+	// DynamoDBを初期化
+
+	// S3接続を初期化
+
+	// repositoryを初期化
+	repos :=
+
+		// ルーティングを定義
+		s.setUpRouter()
+
+	return &Server{Engine: r}
+}
+
+func (s *Server) setUpRouter() {
 	// Ping test
-	r.GET("/ping", func(c *gin.Context) {
+	s.Engine.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
 	})
 
 	// Get user value
-	r.GET("/user/:name", func(c *gin.Context) {
+	s.Engine.GET("/user/:name", func(c *gin.Context) {
 		user := c.Params.ByName("name")
 		value, ok := db[user]
 		if ok {
@@ -32,12 +46,12 @@ func setupRouter() *gin.Engine {
 
 	// Authorized group (uses gin.BasicAuth() middleware)
 	// Same than:
-	// authorized := r.Group("/")
+	// authorized := s.Engine.Group("/")
 	// authorized.Use(gin.BasicAuth(gin.Credentials{
 	//	  "foo":  "bar",
 	//	  "manu": "123",
 	//}))
-	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
+	authorized := s.Engine.Group("/", gin.BasicAuth(gin.Accounts{
 		"foo":  "bar", // user:foo password:bar
 		"manu": "123", // user:manu password:123
 	}))
@@ -64,17 +78,10 @@ func setupRouter() *gin.Engine {
 			c.JSON(http.StatusOK, gin.H{"status": "ok"})
 		}
 	})
-
-	return r
 }
 
-var env = flag.String("env", "prod", "Execute environment")
+func (s *Server) Init() error {
+	set
 
-func main() {
-	// 実行環境をフラグから取得する
-	flag.Parse()
-	fmt.Println("env: ", *env)
-
-	s := app.NewServer()
-	s.Engine.Run(":8080")
+	return nil
 }
