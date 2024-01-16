@@ -1,87 +1,95 @@
 package app
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/mochi-yu/kns23-catch-up/app/handler"
+	"github.com/mochi-yu/kns23-catch-up/app/infrastructure"
+	"github.com/mochi-yu/kns23-catch-up/app/middleware"
+	"github.com/mochi-yu/kns23-catch-up/app/repository"
+	"github.com/mochi-yu/kns23-catch-up/app/usecase"
 )
 
 type Server struct {
-	Engine *gin.Engine
+	Engine     *gin.Engine
+	repository *repository.Repository
+	usecase    *usecase.UseCase
+	handler    *handler.Handler
 }
 
 func NewServer() *Server {
 	r := gin.Default()
 	s := &Server{Engine: r}
 
-	// DynamoDBを初期化
+	// DynamoDBの初期化
+	dynamoDBClient := infrastructure.NewDynamoDBClient()
 
-	// S3接続を初期化
+	// S3の初期化
+	s3Client := infrastructure.NewS3Client()
 
 	// repositoryを初期化
-	repos :=
+	s.repository = &repository.Repository{
+		S3Client: s3Client,
+		User:     repository.NewUserRepository(dynamoDBClient),
+		Post:     repository.NewPostRepository(dynamoDBClient),
+	}
 
-		// ルーティングを定義
-		s.setUpRouter()
+	// usecaseを初期化
+	s.usecase = &usecase.UseCase{
+		Health: usecase.NewHealthUseCase(s.repository),
+		User:   usecase.NewUserUseCase(s.repository),
+		Post:   usecase.NewPostUseCase(s.repository),
+	}
 
-	return &Server{Engine: r}
+	// ハンドラーを初期化
+	s.handler = &handler.Handler{
+		Health: handler.NewHealthHandler(s.usecase.Health),
+		Post:   handler.NewPostHandler(s.usecase.Post),
+		User:   handler.NewUserHandler(s.usecase.User),
+	}
+
+	// ルーティングを定義
+	s.setUpRouter(dynamoDBClient, s3Client)
+
+	return s
 }
 
-func (s *Server) setUpRouter() {
-	// Ping test
-	s.Engine.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
-	})
+func (s *Server) setUpRouter(
+	dynamoDBClient infrastructure.DynamoDBClient,
+	s3Client infrastructure.S3Client,
+) {
+	// ルーティングの定義
+	// ログインを必要としないエンドポイント
+	v1Group := s.Engine.Group("/v1")
+	v1Group.GET("/health", s.handler.Health.IndexGet)
+	v1Group.POST("/health", s.handler.Health.IndexPost)
+	v1Group.POST("/register", s.handler.User.RegisterPost)
 
-	// Get user value
-	s.Engine.GET("/user/:name", func(c *gin.Context) {
-		user := c.Params.ByName("name")
-		value, ok := db[user]
-		if ok {
-			c.JSON(http.StatusOK, gin.H{"user": user, "value": value})
-		} else {
-			c.JSON(http.StatusOK, gin.H{"user": user, "status": "no value"})
-		}
-	})
+	// ログインが必要なグループ
+	authGroup := v1Group.Group("/")
+	authGroup.Use(middleware.LoginAuth())
 
-	// Authorized group (uses gin.BasicAuth() middleware)
-	// Same than:
-	// authorized := s.Engine.Group("/")
-	// authorized.Use(gin.BasicAuth(gin.Credentials{
-	//	  "foo":  "bar",
-	//	  "manu": "123",
-	//}))
-	authorized := s.Engine.Group("/", gin.BasicAuth(gin.Accounts{
-		"foo":  "bar", // user:foo password:bar
-		"manu": "123", // user:manu password:123
-	}))
+	userGroup := authGroup.Group("/users")
+	userGroup.GET("/", s.handler.User.GetUsers)
+	userGroup.GET("/{user_id}", s.handler.User.GetByUserID)
+	userGroup.PUT("/{user_id}", s.handler.User.PutByUserID)
+	userGroup.GET("/{user_id}/posts", s.handler.User.GetUserPosts)
+	userGroup.GET("/{user_id}/reactions", s.handler.User.GetUserReactions)
+	userGroup.GET("/{user_id}/comments", s.handler.User.GetUserComments)
 
-	/* example curl for /admin with basicauth header
-	   Zm9vOmJhcg== is base64("foo:bar")
+	postGroup := authGroup.Group("/posts")
+	postGroup.GET("/", s.handler.Post.GetPosts)
+	postGroup.POST("/", s.handler.Post.PostNewPost)
+	postGroup.GET("/", s.handler.Post.GetPostByPostID)
+	postGroup.PUT("/", s.handler.Post.PutPostByPostID)
+	postGroup.DELETE("/", s.handler.Post.DeletePostByPostID)
+	postGroup.GET("/", s.handler.Post.GetPostReactionsByPostID)
+	postGroup.POST("/", s.handler.Post.PostPostReactionsByPostID)
+	postGroup.DELETE("/", s.handler.Post.DeletePostReactionsByPostID)
+	postGroup.GET("/", s.handler.Post.GetPostCommentsByPostID)
+	postGroup.POST("/", s.handler.Post.PostPostCommentsByPostID)
+	postGroup.DELETE("/", s.handler.Post.DeletePostCommentsByPostID)
 
-		curl -X POST \
-	  	http://localhost:8080/admin \
-	  	-H 'authorization: Basic Zm9vOmJhcg==' \
-	  	-H 'content-type: application/json' \
-	  	-d '{"value":"bar"}'
-	*/
-	authorized.POST("admin", func(c *gin.Context) {
-		user := c.MustGet(gin.AuthUserKey).(string)
-
-		// Parse JSON
-		var json struct {
-			Value string `json:"value" binding:"required"`
-		}
-
-		if c.Bind(&json) == nil {
-			db[user] = json.Value
-			c.JSON(http.StatusOK, gin.H{"status": "ok"})
-		}
-	})
-}
-
-func (s *Server) Init() error {
-	set
-
-	return nil
+	// admin権限が必要なグループ
+	adminGroup := v1Group.Group("/admin")
+	adminGroup.Use(middleware.AdminAuth())
 }
