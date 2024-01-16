@@ -1,0 +1,31 @@
+delete:
+  summary: コメントを削除する
+  operationId: delete_comment
+  description: comment_idで指定した投稿のコメントを削除する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: comment_id
+      required: true
+      schema: 
+        type: string
+      description: 対象のコメントのID
+  responses:
+    '200':
+      description: 削除したコメントのIDをレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              deletedCommentID:
+                type: string
+    '400':
+      $ref: '../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../index.yaml#/components/responses/UnauthorizedError'

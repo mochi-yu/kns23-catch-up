@@ -1,0 +1,68 @@
+get:
+  summary: ユーザ情報を取得する
+  operationId: get_user
+  description: ユーザIDで指定したユーザの情報を取得する
+  security:
+    - loginAuth: []
+  tags:
+    - User
+  parameters:
+    - in: path
+      name: user_id
+      required: true
+      schema: 
+        type: string
+      description: 取得するユーザのユーザID
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: '../../../index.yaml#/components/schemas/User'
+    '400':
+      $ref: '../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../index.yaml#/components/responses/UnauthorizedError'
+put:
+  summary: ユーザ情報の更新
+  operationId: update_user_info
+  description: ユーザIDで指定したユーザの情報を更新する
+  security:
+    - loginAuth: []
+  tags:
+    - User
+  parameters:
+    - in: path
+      name: user_id
+      required: true
+      schema: 
+        type: string
+      description: 取得するユーザのユーザID
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          $ref: '../../../index.yaml#/components/schemas/User'
+  responses:
+    '200':
+      description: 更新したプロフィールをレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              updated:
+                $ref: '../../../index.yaml#/components/schemas/User'
+    '400':
+      $ref: '../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../index.yaml#/components/responses/UnauthorizedError'

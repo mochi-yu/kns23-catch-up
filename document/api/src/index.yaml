@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: kns23-catch-up
+  version: '0.1'
+  description: '高校の同窓会に向けて、各自の近況を報告できるSNSのAPI仕様'
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: 'http://127.0.0.1:8086/v1'
+    description: ローカル環境
+  - url: 'https://example1.com'
+    description: STG環境
+
+paths:
+  # ヘルスチェック
+  '/health':
+    $ref: './paths/health.yaml'
+
+  # ログインに関わるエンドポイント 
+  '/register':
+    $ref: './paths/register.yaml'
+
+  # ユーザに関わるエンドポイント 
+  '/users':
+    $ref: './paths/users/index.yaml'
+  '/users/{user_id}':
+    $ref: './paths/users/{user_id}/index.yaml'
+  '/users/{user_id}/posts':
+    $ref: './paths/users/{user_id}/posts.yaml'
+  '/users/{user_id}/reactions':
+    $ref: './paths/users/{user_id}/reactions.yaml'
+  '/users/{user_id}/comments':
+    $ref: './paths/users/{user_id}/comments.yaml'
+
+  # 投稿に関わるエンドポイント
+  '/posts':
+    $ref: './paths/posts/index.yaml'
+  '/posts/{post_id}':
+    $ref: './paths/posts/{post_id}/index.yaml'
+  '/posts/{post_id}/reactions':
+    $ref: './paths/posts/{post_id}/reactions/index.yaml'
+  '/posts/{post_id}/reactions/{reaction_id}':
+    $ref: './paths/posts/{post_id}/reactions/{reaction_id}.yaml'
+  '/posts/{post_id}/comments':
+    $ref: './paths/posts/{post_id}/comments.yaml'
+
+  # コメントに関わるエンドポイント
+  '/comments/{comment_id}':
+    $ref: './paths/comments/{comment_id}.yaml'
+
+components:
+  securitySchemes:
+    loginAuth:
+      $ref: './components/securitySchemes/loginAuth.yaml'
+
+  schemas:
+    Error:
+      $ref: './components/schemas/Error.yaml'
+    User:
+      $ref: './components/schemas/User.yaml'
+    Post:
+      $ref: './components/schemas/Post.yaml'
+    Comment:
+      $ref: './components/schemas/Comment.yaml'
+    Reaction:
+      $ref: './components/schemas/Reaction.yaml'
+
+  responses:
+    GenericError:
+      $ref: './components/responses/GenericError.yaml'
+    ForbiddenError:
+      $ref: './components/responses/ForbiddenError.yaml'
+    UnauthorizedError:
+      $ref: './components/responses/UnauthorizedError.yaml'
+
+tags:
+  - name: User
+    description: ユーザに関するエンドポイント
+  - name: Post
+    description: 投稿に関するエンドポイント
+  - name: Admin
+    description: 管理者ツール用のエンドポイント

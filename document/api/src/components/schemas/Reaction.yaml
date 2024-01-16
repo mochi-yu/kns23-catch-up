@@ -1,0 +1,16 @@
+type: object
+properties:
+  reactionID:
+    description: リアクションID
+    type: integer
+  count:
+    description: リアクション数
+    type: integer
+  users:
+    description: リアクションしたユーザの情報
+    type: array
+    items:
+      $ref: '../../index.yaml#/components/schemas/User'
+  isReact:
+    description: 当該ユーザがこのポストにリアクションをつけているかのフラグ 
+    type: boolean

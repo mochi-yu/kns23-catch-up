@@ -1,0 +1,31 @@
+type: object
+properties:
+  userID:
+    description: ユーザID
+    type: string
+  displayName:
+    description: 表示名
+    type: string
+  userName:
+    description: ユーザ名
+    type: string
+  classID:
+    description: クラスID
+    type: string
+  mailAddress:
+    description: 登録メールアドレス
+    type: string
+  isAdmin:
+    description: 管理者かどうか
+    type: boolean
+  isTeacher:
+    description: 先生かどうか
+    type: boolean
+  createdAt:
+    description: アカウント作成日時
+    type: integer
+    format: int64
+  updatedAt:
+    description: 更新日時
+    type: integer
+    format: int64

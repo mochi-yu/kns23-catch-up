@@ -1,0 +1,56 @@
+get:
+  summary: ユーザ一覧を取得する
+  operationId: 'get_user_list'
+  description: ユーザの一覧を取得する。条件はクエリパラメータで指定する
+  security:
+    - loginAuth: []
+  tags:
+    - User
+  parameters:
+    - in: query
+      name: limit
+      schema: 
+        type: integer
+      description: 取得する件数を指定する
+    - in: query
+      name: offset
+      schema: 
+        type: integer
+      description: 取得時のオフセットを指定する
+    - in: query
+      name: class_id
+      schema: 
+        type: integer
+      description: クラスで絞り込む
+    - in: query
+      name: order
+      schema: 
+        type: string
+      description: |
+        並び順を指定する。
+         - createなら作成順
+         - updateなら更新順
+         - idならユーザID順
+    - in: query
+      name: reverse
+      schema: 
+        type: boolean
+      description: trueなら並び順を逆順にする
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              users:
+                type: array
+                items:
+                  $ref: '../../index.yaml#/components/schemas/User'
+    '400':
+      $ref: '../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../index.yaml#/components/responses/UnauthorizedError'

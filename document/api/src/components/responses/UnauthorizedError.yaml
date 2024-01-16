@@ -1,0 +1,5 @@
+description: '認証されていないユーザからのリクエストに対するエラー'
+content:
+  application/json:
+    schema:
+      $ref: '../../index.yaml#/components/schemas/Error'

@@ -1,0 +1,37 @@
+delete:
+  summary: リアクションを削除する
+  operationId: delete_reaction
+  description: post_idで指定した投稿のリアクションを削除する
+  security:
+    - loginAuth: []
+  tags:
+    - Post
+  parameters:
+    - in: path
+      name: post_id
+      required: true
+      schema: 
+        type: string
+      description: 対象の投稿の投稿ID
+    - in: path
+      name: reaction_id
+      required: true
+      schema: 
+        type: string
+      description: 対象のリアクションのID
+  responses:
+    '200':
+      description: 削除したリアクションの内容をレスポンス
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              deletedReaction:
+                $ref: '../../../../index.yaml#/components/schemas/Reaction'
+    '400':
+      $ref: '../../../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../../../index.yaml#/components/responses/UnauthorizedError'

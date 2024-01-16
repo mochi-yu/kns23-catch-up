@@ -1,0 +1,45 @@
+get:
+  summary: エンドポイントのGETのテスト
+  operationId: 'test_get'
+  description: エンドポイントのGETのテスト
+  security: []
+  tags:
+    - Admin
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              test:
+                type: string
+    '400':
+      $ref: '../index.yaml#/components/responses/GenericError'
+post:
+  summary: 'エンドポイントのPOSTのテスト'
+  operationId: 'test_post'
+  security: []
+  tags:
+    - Admin
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+  responses:
+    '200':
+      description: 'エンドポイントのPOSTのテスト'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              greet:
+                type: string
+    '400':
+      $ref: '../index.yaml#/components/responses/GenericError'
