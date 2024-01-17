@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "ルート",
+			"path": "."
+		},
+		{
+			"name": "フロントエンド",
+			"path": "frontend"
+		},
+		{
+			"name": "バックエンド",
+			"path": "api"
+		}
+	],
+	"settings": {}
+}

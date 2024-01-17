@@ -6,13 +6,15 @@
     "dev": "next dev -p 3085",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier . --write"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.3",
     "@mui/material": "^5.15.3",
+    "eslint-plugin-unused-imports": "^3.0.0",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18"
@@ -23,6 +25,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
+    "prettier": "3.2.2",
     "typescript": "^5"
   }
 }
