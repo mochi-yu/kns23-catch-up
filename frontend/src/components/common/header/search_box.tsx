@@ -2,7 +2,7 @@
 
 import { Stack, IconButton, InputBase, styled } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
 
 const StyledStack = styled(Stack)({
   backgroundColor: "#EDEDF4",

@@ -1,16 +1,8 @@
 "use client";
 
-import { Button, Stack, ThemeProvider, createTheme, styled } from "@mui/material";
+import { Button, Stack, styled } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import Typography from "@mui/material/Typography";
-
-const theme = createTheme({
-  palette: {
-    secondary: {
-      main: "#565F71",
-    },
-  },
-});
 
 const StyledButton = styled(Button)({
   color: "white",
