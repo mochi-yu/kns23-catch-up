@@ -3,13 +3,13 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Slide from "@mui/material/Slide";
 import AppBar from "@mui/material/AppBar";
 import { useScrollTrigger } from "@mui/material";
 import { SearchBox } from "./search_box";
 import { NewPostButton } from "@/components/new_post_button";
+import { AccountButton } from "@/components/account_button";
+import { NotifyButton } from "@/components/notify_button";
 
 interface Props {
   window?: () => Window;
@@ -56,8 +56,8 @@ export function Header(props: Props) {
               </Box>
 
               <Stack spacing='5px' direction='row' alignItems='center'>
-                <NotificationsNoneIcon sx={{ fontSize: "30px" }} />
-                <AccountCircleIcon sx={{ fontSize: "50px" }} />
+                <NotifyButton />
+                <AccountButton />
                 <NewPostButton />
               </Stack>
             </Stack>
