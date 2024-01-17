@@ -25,14 +25,11 @@ export function Header() {
           <SearchBox text="aaa" />
         </Box>
 
-        <NotificationsNoneIcon sx={{fontSize: "30px"}}/>
-        <AccountCircleIcon sx={{fontSize: "50px"}}/>
-        <Button sx={{bgcolor: "#565F71", color: "#FFFFFF", p: "5px", borderRadius: "15px", height: "40px"}}>
-          <EditIcon />
-          <Typography>
-            新規投稿
-          </Typography>
-        </Button>
+        <Stack spacing="5px" direction="row" alignItems="center">
+          <NotificationsNoneIcon sx={{fontSize: "30px"}}/>
+          <AccountCircleIcon sx={{fontSize: "50px"}}/>
+          <NewPostButton />
+        </Stack>
       </Stack>
     </>
   )
