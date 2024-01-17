@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
 import { Button, Stack, ThemeProvider, createTheme, styled } from "@mui/material";
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import Typography from "@mui/material/Typography";
 
 const theme = createTheme({
   palette: {
     secondary: {
-      main: "#565F71"
-    }
-  }
-})
+      main: "#565F71",
+    },
+  },
+});
 
 const StyledButton = styled(Button)({
   color: "white",
@@ -26,28 +26,30 @@ const StyledButton = styled(Button)({
     backgroundColor: "#565F71",
     boxShadow: "none",
     transform: "translate(0, 4px)",
-  }
-})
+  },
+});
 
 export function NewPostButton() {
   function clickHandler() {
-    console.log("pushed new post button.")
+    console.log("pushed new post button.");
   }
 
   return (
     <>
       <StyledButton onClick={clickHandler}>
-        <Stack spacing="5px" direction="row" alignItems="center">
-          <EditOutlinedIcon sx={{fontSize: "18px"}} />
-          <Typography sx={{
-            fontFamily: "Roboto",
-            fontSize: "20px",
-            fontWeight: 600,
-          }}>
+        <Stack spacing='5px' direction='row' alignItems='center'>
+          <EditOutlinedIcon sx={{ fontSize: "18px" }} />
+          <Typography
+            sx={{
+              fontFamily: "Roboto",
+              fontSize: "20px",
+              fontWeight: 600,
+            }}
+          >
             新規投稿
           </Typography>
         </Stack>
       </StyledButton>
     </>
-  )
+  );
 }
