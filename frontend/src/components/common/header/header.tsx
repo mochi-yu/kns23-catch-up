@@ -12,10 +12,16 @@ export function Header() {
       <Stack
         direction="row"
         sx={{width: "100%", bgcolor: "#D6E3FF", py: "10px", px: "20px"}}
-        spacing="10px"
+        spacing="20px"
         alignItems="center"
       >
-        <Typography variant="h4">
+        <Typography
+          style={{
+            fontFamily: "Roboto",
+            fontSize: "45px",
+            fontWeight: 600,
+          }}
+        >
           ReMeet
         </Typography>
         
