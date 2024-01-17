@@ -3,9 +3,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import EditIcon from '@mui/icons-material/Edit';
-import { SearchBox } from "./searchBox";
-import Button from "@mui/material/Button";
+import { SearchBox } from "./search_box";
+import { NewPostButton } from "@/components/new_post_button";
 
 export function Header() {
   return (
@@ -22,7 +21,7 @@ export function Header() {
         
         {/* 検索窓 */}
         <Box sx={{flex: "1 1 0px"}} height="40px">
-          <SearchBox text="aaa" />
+          <SearchBox />
         </Box>
 
         <Stack spacing="5px" direction="row" alignItems="center">
