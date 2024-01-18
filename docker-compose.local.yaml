@@ -11,9 +11,8 @@ services:
     volumes:
       - ./api:/app
     depends_on:
-      - "dynamodb-local"
-    links:
-      - "dynamodb-local"
+      - dynamodb-local
+      - minio-kns23
 
   dynamodb-local:
     container_name: dynamodb-kns23
@@ -29,7 +28,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${DYNAMO_SECRET_ACCESS_KEY}
       REGION: ${DYNAMO_REGION}
   
-  minio-stech:
+  minio-kns23:
     image: minio/minio:latest
     container_name: minio-kns23
     ports:
