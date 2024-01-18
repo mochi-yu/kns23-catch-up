@@ -9,6 +9,6 @@ type userRepository struct {
 	db *infrastructure.DynamoDBClient
 }
 
-func NewUserRepository(dynamodb *infrastructure.DynamoDBClient) UserRepository {
-	return &userRepository{db: dynamodb}
+func NewUserRepository(dynamodb infrastructure.DynamoDBClient) UserRepository {
+	return &userRepository{db: &dynamodb}
 }
