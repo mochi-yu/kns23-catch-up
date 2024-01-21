@@ -3,19 +3,9 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Slide from "@mui/material/Slide";
-import AppBar from "@mui/material/AppBar";
 import { Container, useScrollTrigger } from "@mui/material";
 
-interface Props {
-  window?: () => Window;
-}
-
-export function Footer(props: Props) {
-  const window = props.window;
-  const trigger = useScrollTrigger({
-    target: window ? window() : undefined,
-  });
+export function Footer() {
 
   return (
     <>
