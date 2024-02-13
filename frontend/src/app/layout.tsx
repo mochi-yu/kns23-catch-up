@@ -33,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
 
         <body className={inter.className} style={{ backgroundColor: "#E0E2EC" }}>
+          {/* CssBaselineでデフォルトのCSSをリセットする */}
           <CssBaseline />
           <Header />
           {children}
