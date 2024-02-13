@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -44,6 +45,7 @@ func (uh *userHandler) RegisterPost(c *gin.Context) {
 	// メインの処理
 	err := uh.uu.RegisterPost(requestParam)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		c.Abort()
 	}
