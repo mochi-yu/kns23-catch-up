@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: kns23-catch-up
-  version: '0.1'
+  version: '0.2'
   description: 高校の同窓会に向けて、各自の近況を報告できるSNSのAPI仕様
   license:
     name: Apache 2.0
@@ -67,7 +67,8 @@ paths:
           $ref: '#/components/responses/GenericError'
   /register:
     post:
-      summary: 現在の表示状態を取得する
+      summary: ユーザ登録を行う
+      description: 登録フォームからユーザの登録を行う時に使用する。
       operationId: get_status
       security: []
       tags:
