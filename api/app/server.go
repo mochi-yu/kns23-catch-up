@@ -47,8 +47,8 @@ func NewServer() *Server {
 	// repositoryを初期化
 	s.repository = &repository.Repository{
 		S3Client: s3Client,
-		User:     repository.NewUserRepository(dynamoDBClient),
-		Post:     repository.NewPostRepository(dynamoDBClient),
+		User:     repository.NewUserRepository(*dynamoDBClient),
+		Post:     repository.NewPostRepository(*dynamoDBClient),
 	}
 
 	// usecaseを初期化
@@ -66,13 +66,12 @@ func NewServer() *Server {
 	}
 
 	// ルーティングを定義
-	s.setUpRouter(dynamoDBClient, s3Client)
+	s.setUpRouter(s3Client)
 
 	return s
 }
 
 func (s *Server) setUpRouter(
-	dynamoDBClient infrastructure.DynamoDBClient,
 	s3Client infrastructure.S3Client,
 ) {
 	// ルーティングの定義

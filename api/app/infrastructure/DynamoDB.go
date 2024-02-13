@@ -12,14 +12,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-type DynamoDBClient interface {
+type DynamoDBClient struct {
+	C *dynamodb.Client
 }
 
-type dynamodbClient struct {
-	c *dynamodb.Client
-}
-
-func NewDynamoDBClient() DynamoDBClient {
+func NewDynamoDBClient() *DynamoDBClient {
 	access_key_id := os.Getenv("DYNAMO_ACCESS_KEY_ID")
 	secret_access_key := os.Getenv("DYNAMO_SECRET_ACCESS_KEY")
 	dynamodb_region := os.Getenv("DYNAMO_REGION")
@@ -53,5 +50,5 @@ func NewDynamoDBClient() DynamoDBClient {
 		fmt.Print(tables.TableNames)
 	}
 
-	return &dynamodbClient{c: client}
+	return &DynamoDBClient{C: client}
 }
