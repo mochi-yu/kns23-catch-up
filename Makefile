@@ -43,17 +43,17 @@ create_table_local:
 	aws-vault exec $(AWS_ACCOUNT_NAME) -- aws dynamodb \
 		create-table --table-name users \
 		--attribute-definitions \
-			AttributeName=userID,AttributeType=S \
+			AttributeName=user_id,AttributeType=S \
 		--key-schema \
-			AttributeName=userID,KeyType=HASH \
+			AttributeName=user_id,KeyType=HASH \
 		--billing-mode=PAY_PER_REQUEST \
 		--endpoint-url http://localhost:$(DYNAMO_DB_PORT)
 	aws-vault exec $(AWS_ACCOUNT_NAME) -- aws dynamodb \
 		create-table --table-name posts \
 		--attribute-definitions \
-			AttributeName=postID,AttributeType=S \
+			AttributeName=post_id,AttributeType=S \
 		--key-schema \
-			AttributeName=postID,KeyType=HASH \
+			AttributeName=post_id,KeyType=HASH \
 		--billing-mode=PAY_PER_REQUEST \
 		--endpoint-url http://localhost:$(DYNAMO_DB_PORT)
 
