@@ -11,7 +11,7 @@
 erDiagram
   %% モデル
   users {
-    varchar id PK "ユーザID"
+    varchar user_id PK "ユーザID"
     varchar display_name "ユーザ名(表示名)"
     varchar user_name "氏名"
     bigint class_id FK "所属クラス"

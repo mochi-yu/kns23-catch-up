@@ -1,7 +1,11 @@
 package handler
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/mochi-yu/kns23-catch-up/app/model"
 	"github.com/mochi-yu/kns23-catch-up/app/usecase"
 )
 
@@ -24,7 +28,36 @@ func NewUserHandler(uu usecase.UserUseCase) UserHandler {
 }
 
 func (uh *userHandler) RegisterPost(c *gin.Context) {
-	// TODO: implement
+	// パラメータを取得する
+	requestParam := model.RegisterPostParam{}
+	if err := c.BindJSON(&requestParam); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		c.Abort()
+	}
+
+	// パラメータのバリデーション
+	if requestParam.UserID == "" || requestParam.DisplayName == "" ||
+		requestParam.UserName == "" || requestParam.MailAddress == "" ||
+		requestParam.ClassID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "パラメータの値が不足しています。"})
+	}
+
+	// メインの処理
+	err := uh.uu.RegisterPost(requestParam)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.Abort()
+	}
+
+	// レスポンスを返す
+	response := model.RegisterPostResponse{
+		UserID:      requestParam.UserID,
+		DisplayName: requestParam.DisplayName,
+		ClassID:     requestParam.ClassID,
+		MailAddress: requestParam.MailAddress,
+	}
+	c.JSON(http.StatusOK, response)
 }
 
 func (uh *userHandler) GetUsers(c *gin.Context) {

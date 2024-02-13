@@ -1,6 +1,9 @@
 package app
 
 import (
+	"time"
+
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/mochi-yu/kns23-catch-up/app/handler"
 	"github.com/mochi-yu/kns23-catch-up/app/infrastructure"
@@ -18,6 +21,21 @@ type Server struct {
 
 func NewServer() *Server {
 	r := gin.Default()
+
+	// ここからCorsの設定
+	r.Use(cors.New(cors.Config{
+		// アクセスを許可したいアクセス元
+		AllowOrigins: []string{"*"},
+		// アクセスを許可したいHTTPメソッド
+		AllowMethods: []string{"*"},
+		// 許可したいHTTPリクエストヘッダ
+		AllowHeaders: []string{"*"},
+		// cookieなどの情報を必要とするかどうか
+		AllowCredentials: true,
+		// preflightリクエストの結果をキャッシュする時間
+		MaxAge: 24 * time.Hour,
+	}))
+
 	s := &Server{Engine: r}
 
 	// DynamoDBの初期化
@@ -29,8 +47,8 @@ func NewServer() *Server {
 	// repositoryを初期化
 	s.repository = &repository.Repository{
 		S3Client: s3Client,
-		User:     repository.NewUserRepository(dynamoDBClient),
-		Post:     repository.NewPostRepository(dynamoDBClient),
+		User:     repository.NewUserRepository(*dynamoDBClient),
+		Post:     repository.NewPostRepository(*dynamoDBClient),
 	}
 
 	// usecaseを初期化
@@ -48,13 +66,12 @@ func NewServer() *Server {
 	}
 
 	// ルーティングを定義
-	s.setUpRouter(dynamoDBClient, s3Client)
+	s.setUpRouter(s3Client)
 
 	return s
 }
 
 func (s *Server) setUpRouter(
-	dynamoDBClient infrastructure.DynamoDBClient,
 	s3Client infrastructure.S3Client,
 ) {
 	// ルーティングの定義

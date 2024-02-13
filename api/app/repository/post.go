@@ -11,6 +11,6 @@ type postRepository struct {
 	db *infrastructure.DynamoDBClient
 }
 
-func NewPostRepository(dynamodb *infrastructure.DynamoDBClient) PostRepository {
-	return &postRepository{db: dynamodb}
+func NewPostRepository(dynamodb infrastructure.DynamoDBClient) PostRepository {
+	return &postRepository{db: &dynamodb}
 }

@@ -10,10 +10,13 @@ services:
     # Important to bind/mount your codebase dir to /app dir for live reload
     volumes:
       - ./api:/app
+    env_file:
+      - ./.env.local
     depends_on:
-      - "dynamodb-local"
-    links:
-      - "dynamodb-local"
+      - dynamodb-local
+      - minio-kns23
+    networks:
+      - app_net
 
   dynamodb-local:
     container_name: dynamodb-kns23
@@ -28,8 +31,10 @@ services:
       AWS_ACCESS_KEY_ID: ${DYNAMO_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${DYNAMO_SECRET_ACCESS_KEY}
       REGION: ${DYNAMO_REGION}
-  
-  minio-stech:
+    networks:
+      - app_net
+
+  minio-kns23:
     image: minio/minio:latest
     container_name: minio-kns23
     ports:
@@ -41,3 +46,9 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge

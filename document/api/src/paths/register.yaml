@@ -1,5 +1,6 @@
 post:
-  summary: 現在の表示状態を取得する
+  summary: ユーザ登録を行う
+  description: 登録フォームからユーザの登録を行う時に使用する。
   operationId: 'get_status'
   security: []
   tags:
