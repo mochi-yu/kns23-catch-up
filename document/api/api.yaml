@@ -65,11 +65,11 @@ paths:
                     type: string
         '400':
           $ref: '#/components/responses/GenericError'
-  /register:
+  /auth:
     post:
       summary: ユーザ登録を行う
       description: 登録フォームからユーザの登録を行う時に使用する。
-      operationId: get_status
+      operationId: create_new_user
       security: []
       tags:
         - User
@@ -102,6 +102,25 @@ paths:
           $ref: '#/components/responses/ForbiddenError'
         '403':
           $ref: '#/components/responses/UnauthorizedError'
+    get:
+      summary: ユーザの認証を行う
+      operationId: get_user_info
+      description: ユーザの認証を行い、ユーザ情報を取得する
+      security: []
+      tags:
+        - User
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  test:
+                    type: string
+        '400':
+          $ref: '#/components/responses/GenericError'
   /users:
     get:
       summary: ユーザ一覧を取得する

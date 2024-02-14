@@ -18,8 +18,8 @@ paths:
     $ref: './paths/health.yaml'
 
   # ログインに関わるエンドポイント 
-  '/register':
-    $ref: './paths/register.yaml'
+  '/auth':
+    $ref: './paths/auth.yaml'
 
   # ユーザに関わるエンドポイント 
   '/users':
