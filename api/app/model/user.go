@@ -11,10 +11,19 @@ type RegisterPostParam struct {
 }
 
 type RegisterPostResponse struct {
-	UserID      string `json:"userID"`
-	DisplayName string `json:"displayName"`
-	ClassID     string `json:"ClassID"`
-	MailAddress string `json:"mailAddress"`
+type UserResponse struct {
+	UserID      string `json:"user_id"`
+	DisplayName string `json:"display_name"`
+	UserName    string `json:"user_name"`
+	ClassID     string `json:"class_id"`
+	MailAddress string `json:"mail_address"`
+
+	IsTempUser bool `json:"is_temp_user"`
+	IsAdmin    bool `json:"is_admin"`
+	IsTeacher  bool `json:"is_teacher"`
+
+	CreatedAt int64 `json:"created_at"`
+	UpdatedAt int64 `json:"updated_at"`
 }
 
 type UserModel struct {
@@ -48,5 +57,22 @@ func RegisterParam2UserModel(param RegisterPostParam) *UserModel {
 
 		CreatedAt: currentTime,
 		UpdatedAt: currentTime,
+	}
+}
+
+func UserModel2UserResponse(um *UserModel, isTempUser bool) UserResponse {
+	return UserResponse{
+		UserID:      um.UserID,
+		DisplayName: um.DisplayName,
+		UserName:    um.UserName,
+		ClassID:     um.ClassID,
+		MailAddress: um.MailAddress,
+
+		IsTempUser: isTempUser,
+		IsAdmin:    um.IsAdmin,
+		IsTeacher:  um.IsTeacher,
+
+		CreatedAt: um.CreatedAt,
+		UpdatedAt: um.UpdatedAt,
 	}
 }

@@ -7,10 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mochi-yu/kns23-catch-up/app/model"
 	"github.com/mochi-yu/kns23-catch-up/app/usecase"
+	"github.com/mochi-yu/kns23-catch-up/app/util"
 )
 
 type UserHandler interface {
-	RegisterPost(c *gin.Context)
+	GetAuth(c *gin.Context)
 	GetUsers(c *gin.Context)
 	GetByUserID(c *gin.Context)
 	PutByUserID(c *gin.Context)
@@ -57,6 +58,29 @@ func (uh *userHandler) RegisterPost(c *gin.Context) {
 		ClassID:     requestParam.ClassID,
 		MailAddress: requestParam.MailAddress,
 	}
+	c.JSON(http.StatusOK, response)
+}
+
+func (uh *userHandler) GetAuth(c *gin.Context) {
+	// ユーザ情報を取得
+	u, err := util.GetUserInfoFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.Abort()
+		return
+	}
+
+	// メインの処理を実施
+	userInfo, isTempUser, err := uh.uu.GetAuth(u)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.Abort()
+		return
+	}
+
+	// レスポンスを返す
+	response := model.UserModel2UserResponse(userInfo, isTempUser)
 	c.JSON(http.StatusOK, response)
 }
 
