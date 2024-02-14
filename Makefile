@@ -43,9 +43,9 @@ create_table_local:
 	aws-vault exec $(AWS_ACCOUNT_NAME) -- aws dynamodb \
 		create-table --table-name users \
 		--attribute-definitions \
-			AttributeName=user_id,AttributeType=S \
+			AttributeName=firebase_id,AttributeType=S \
 		--key-schema \
-			AttributeName=user_id,KeyType=HASH \
+			AttributeName=firebase_id,KeyType=HASH \
 		--billing-mode=PAY_PER_REQUEST \
 		--endpoint-url http://localhost:$(DYNAMO_DB_PORT)
 	aws-vault exec $(AWS_ACCOUNT_NAME) -- aws dynamodb \
