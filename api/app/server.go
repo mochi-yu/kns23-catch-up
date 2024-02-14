@@ -88,15 +88,17 @@ func (s *Server) setUpRouter(
 	v1Group := s.Engine.Group("/v1")
 	v1Group.GET("/health", s.handler.Health.IndexGet)
 	v1Group.POST("/health", s.handler.Health.IndexPost)
-	v1Group.POST("/register", s.handler.User.RegisterPost)
 
 	// ログインが必要なグループ
-	authGroup := v1Group.Group("/")
-	authGroup.Use(s.middleware.LoginAuth.Check())
+	needLoginGroup := v1Group.Group("/")
+	needLoginGroup.Use(s.middleware.LoginAuth.Check())
 
-	authGroup.POST("/auth/temp", s.handler.User.PostAuthTemp)
+	authGroup := needLoginGroup.Group("/auth")
+	authGroup.POST("/", s.handler.User.PostAuth)
+	authGroup.GET("/", s.handler.User.GetAuth)
+	authGroup.POST("/temp", s.handler.User.PostAuthTemp)
 
-	userGroup := authGroup.Group("/users")
+	userGroup := needLoginGroup.Group("/users")
 	userGroup.GET("/", s.handler.User.GetUsers)
 	userGroup.GET("/{user_id}", s.handler.User.GetByUserID)
 	userGroup.PUT("/{user_id}", s.handler.User.PutByUserID)
@@ -104,7 +106,7 @@ func (s *Server) setUpRouter(
 	userGroup.GET("/{user_id}/reactions", s.handler.User.GetUserReactions)
 	userGroup.GET("/{user_id}/comments", s.handler.User.GetUserComments)
 
-	postGroup := authGroup.Group("/posts")
+	postGroup := needLoginGroup.Group("/posts")
 	postGroup.GET("/", s.handler.Post.GetPosts)
 	postGroup.POST("/", s.handler.Post.PostNewPost)
 	postGroup.GET("/{post_id}", s.handler.Post.GetPostByPostID)

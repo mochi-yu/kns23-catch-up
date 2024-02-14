@@ -70,7 +70,8 @@ paths:
       summary: ユーザ登録を行う
       description: 登録フォームからユーザの登録を行う時に使用する。
       operationId: create_new_user
-      security: []
+      security:
+        - loginAuth: []
       tags:
         - User
       requestBody:
