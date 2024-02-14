@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -32,7 +31,6 @@ func (la *LoginAuth) Check() gin.HandlerFunc {
 
 		// コンテキストにuidを追加
 		ctx.Set("uid", token.UID)
-		fmt.Println(token.UID)
 	}
 }
 
