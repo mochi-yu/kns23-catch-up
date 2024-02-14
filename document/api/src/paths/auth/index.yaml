@@ -56,13 +56,10 @@ get:
     - User
   responses:
     '200':
-      description: OK
+      description: ユーザ情報を返す。ただし、本登録が完了していないユーザについては、is_temp_userのパラメータがtrueになり、詳細なプロフィールの内容は入っていない。
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              test:
-                type: string
+            $ref: "../../index.yaml#/components/schemas/User"
     '400':
       $ref: '../../index.yaml#/components/responses/GenericError'

@@ -15,6 +15,9 @@ properties:
   mail_address:
     description: 登録メールアドレス
     type: string
+  is_temp_user:
+    description: 一時ユーザかどうか
+    type: boolean
   is_admin:
     description: 管理者かどうか
     type: boolean
