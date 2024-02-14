@@ -79,7 +79,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                user_id:
+                  type: string
+                user_name:
+                  type: string
+                class_id:
+                  type: string
+                mail_address:
+                  type: string
+                firebase_id:
+                  type: string
       responses:
         '200':
           description: OK
@@ -106,7 +117,8 @@ paths:
       summary: ユーザの認証を行う
       operationId: get_user_info
       description: ユーザの認証を行い、ユーザ情報を取得する
-      security: []
+      security:
+        - loginAuth: []
       tags:
         - User
       responses:
@@ -121,6 +133,45 @@ paths:
                     type: string
         '400':
           $ref: '#/components/responses/GenericError'
+  /auth/temp:
+    post:
+      summary: 一時ユーザとして登録
+      description: 一時ユーザとして登録を行う
+      operationId: add_temp_user
+      security:
+        - loginAuth: []
+      tags:
+        - User
+      requestBody:
+        description: 登録フォームの入力情報
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mail_address:
+                  type: string
+                firebase_id:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mail_address:
+                    type: string
+                  firebase_id:
+                    type: string
+        '400':
+          $ref: '#/components/responses/GenericError'
+        '401':
+          $ref: '#/components/responses/ForbiddenError'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
   /users:
     get:
       summary: ユーザ一覧を取得する

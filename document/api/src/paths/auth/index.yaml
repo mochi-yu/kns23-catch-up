@@ -11,7 +11,18 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../index.yaml#/components/schemas/User'
+          type: object
+          properties:
+            user_id:
+              type: string
+            user_name:
+              type: string
+            class_id:
+              type: string
+            mail_address:
+              type: string
+            firebase_id:
+              type: string
   responses:
     '200':
       description: OK
@@ -29,11 +40,11 @@ post:
               mail_address:
                 type: string
     '400':
-      $ref: '../index.yaml#/components/responses/GenericError'
+      $ref: '../../index.yaml#/components/responses/GenericError'
     '401':
-      $ref: '../index.yaml#/components/responses/ForbiddenError'
+      $ref: '../../index.yaml#/components/responses/ForbiddenError'
     '403':
-      $ref: '../index.yaml#/components/responses/UnauthorizedError'
+      $ref: '../../index.yaml#/components/responses/UnauthorizedError'
 get:
   summary: ユーザの認証を行う
   operationId: 'get_user_info'
@@ -53,4 +64,4 @@ get:
               test:
                 type: string
     '400':
-      $ref: '../index.yaml#/components/responses/GenericError'
+      $ref: '../../index.yaml#/components/responses/GenericError'
