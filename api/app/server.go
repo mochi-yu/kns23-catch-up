@@ -17,6 +17,7 @@ type Server struct {
 	repository *repository.Repository
 	usecase    *usecase.UseCase
 	handler    *handler.Handler
+	middleware *middleware.Middleware
 }
 
 func NewServer() *Server {
@@ -44,6 +45,9 @@ func NewServer() *Server {
 	// S3の初期化
 	s3Client := infrastructure.NewS3Client()
 
+	// firebaseの初期化
+	firebaseCLient := infrastructure.NewFirebaseClient()
+
 	// repositoryを初期化
 	s.repository = &repository.Repository{
 		S3Client: s3Client,
@@ -65,6 +69,11 @@ func NewServer() *Server {
 		User:   handler.NewUserHandler(s.usecase.User),
 	}
 
+	// ミドルウェアを初期化
+	s.middleware = &middleware.Middleware{
+		LoginAuth: *middleware.NewLoginAuthMiddleware(firebaseCLient),
+	}
+
 	// ルーティングを定義
 	s.setUpRouter(s3Client)
 
@@ -83,7 +92,9 @@ func (s *Server) setUpRouter(
 
 	// ログインが必要なグループ
 	authGroup := v1Group.Group("/")
-	authGroup.Use(middleware.LoginAuth())
+	authGroup.Use(s.middleware.LoginAuth.Check())
+
+	authGroup.POST("/auth/temp", s.handler.User.PostAuthTemp)
 
 	userGroup := authGroup.Group("/users")
 	userGroup.GET("/", s.handler.User.GetUsers)
