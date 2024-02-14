@@ -29,8 +29,16 @@ func (la *LoginAuth) Check() gin.HandlerFunc {
 			return
 		}
 
-		// コンテキストにuidを追加
-		ctx.Set("uid", token.UID)
+		// ユーザ情報を取得する
+		u, err := la.fc.C.GetUser(context.Background(), token.UID)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err})
+			ctx.Abort()
+			return
+		}
+
+		// コンテキストにuser_infoを追加
+		ctx.Set("user_info", u.UserInfo)
 	}
 }
 
