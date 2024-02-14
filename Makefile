@@ -56,6 +56,14 @@ create_table_local:
 			AttributeName=post_id,KeyType=HASH \
 		--billing-mode=PAY_PER_REQUEST \
 		--endpoint-url http://localhost:$(DYNAMO_DB_PORT)
+	aws-vault exec $(AWS_ACCOUNT_NAME) -- aws dynamodb \
+		create-table --table-name temp_users \
+		--attribute-definitions \
+			AttributeName=firebase_id,AttributeType=S \
+		--key-schema \
+			AttributeName=firebase_id,KeyType=HASH \
+		--billing-mode=PAY_PER_REQUEST \
+		--endpoint-url http://localhost:$(DYNAMO_DB_PORT)
 
 drop_table_local:
 	aws-vault exec $(AWS_ACCOUNT_NAME) -- aws dynamodb \
@@ -63,4 +71,7 @@ drop_table_local:
 		--endpoint-url http://localhost:$(DYNAMO_DB_PORT)
 	aws-vault exec $(AWS_ACCOUNT_NAME) -- aws dynamodb \
 		delete-table --table-name posts \
+		--endpoint-url http://localhost:$(DYNAMO_DB_PORT)
+	aws-vault exec $(AWS_ACCOUNT_NAME) -- aws dynamodb \
+		delete-table --table-name temp_users \
 		--endpoint-url http://localhost:$(DYNAMO_DB_PORT)
