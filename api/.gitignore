@@ -22,3 +22,6 @@ go.work
 
 # air build dir
 /tmp
+
+# Firebaseのサービスアカウント
+remeet-kns23-firebase-adminsdk-ae69c-10185f2ef8.json
