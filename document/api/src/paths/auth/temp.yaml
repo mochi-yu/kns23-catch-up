@@ -1,0 +1,38 @@
+post:
+  summary: 一時ユーザとして登録
+  description: 一時ユーザとして登録を行う
+  operationId: 'add_temp_user'
+  security:
+    - loginAuth: []
+  tags:
+    - User
+  requestBody:
+    description: 登録フォームの入力情報
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            mail_address:
+              type: string
+            firebase_id:
+              type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              mail_address:
+                type: string
+              firebase_id:
+                type: string
+    '400':
+      $ref: '../../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../../index.yaml#/components/responses/UnauthorizedError'
