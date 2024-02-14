@@ -41,6 +41,11 @@ type UserModel struct {
 	UpdatedAt int64 `dynamodbav:"updated_at"`
 }
 
+type TempUserModel struct {
+	FirebaseID  string `dynamodbav:"firebase_id"`
+	MailAddress string `dynamodbav:"mail_address"`
+}
+
 func RegisterParam2UserModel(param RegisterPostParam) *UserModel {
 	currentTime := time.Now().Unix()
 
@@ -74,5 +79,12 @@ func UserModel2UserResponse(um *UserModel, isTempUser bool) UserResponse {
 
 		CreatedAt: um.CreatedAt,
 		UpdatedAt: um.UpdatedAt,
+	}
+}
+
+func TempUserModel2UserModel(tum *TempUserModel) *UserModel {
+	return &UserModel{
+		FirebaseID:  tum.FirebaseID,
+		MailAddress: tum.MailAddress,
 	}
 }
