@@ -17,6 +17,16 @@ services:
       - minio-kns23
     networks:
       - app_net
+  
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui-kns23"
+    ports:
+      - "${SWAGGER_UI_PORT}:8080"
+    volumes:
+      - ./document/api/api.yaml:/openapi.yaml
+    environment:
+      SWAGGER_JSON: /openapi.yaml
 
   dynamodb-local:
     container_name: dynamodb-kns23
