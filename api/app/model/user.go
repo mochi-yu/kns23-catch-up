@@ -1,16 +1,31 @@
 package model
 
-import "time"
+import (
+	"time"
 
-type RegisterPostParam struct {
-	UserID      string `json:"userID"`
-	DisplayName string `json:"displayName"`
-	UserName    string `json:"userName"`
-	ClassID     string `json:"ClassID"`
-	MailAddress string `json:"mailAddress"`
+	"firebase.google.com/go/v4/auth"
+)
+
+// 通常ユーザ登録時のパラメータ
+type RegisterPostRequest struct {
+	UserID      string `json:"user_id"`
+	DisplayName string `json:"display_name"`
+	UserName    string `json:"user_name"`
+	ClassID     string `json:"class_id"`
 }
 
-type RegisterPostResponse struct {
+// ユーザ情報の概要のレスポンス
+// ユーザ一覧のレスポンスなどに使用する
+type UserResponseSummary struct {
+	UserID      string `json:"user_id"`
+	DisplayName string `json:"display_name"`
+	UserName    string `json:"user_name"`
+	ClassID     string `json:"class_id"`
+	IsTeacher   bool   `json:"is_teacher"`
+}
+
+// ユーザ情報の詳細のレスポンス
+// 本人へのレスポンスに使用する
 type UserResponse struct {
 	UserID      string `json:"user_id"`
 	DisplayName string `json:"display_name"`
@@ -44,18 +59,20 @@ type UserModel struct {
 type TempUserModel struct {
 	FirebaseID  string `dynamodbav:"firebase_id"`
 	MailAddress string `dynamodbav:"mail_address"`
+
+	CreatedAt int64 `dynamodbav:"created_at"`
 }
 
-func RegisterParam2UserModel(param RegisterPostParam) *UserModel {
+func RegisterPostParam2UserModel(u *auth.UserInfo, p RegisterPostRequest) UserModel {
 	currentTime := time.Now().Unix()
 
-	return &UserModel{
-		UserID:      param.UserID,
-		DisplayName: param.DisplayName,
-		UserName:    param.UserName,
-		ClassID:     param.ClassID,
-		MailAddress: param.MailAddress,
-		FirebaseID:  "test",
+	return UserModel{
+		FirebaseID:  u.UID,
+		UserID:      p.UserID,
+		DisplayName: p.DisplayName,
+		UserName:    p.UserName,
+		ClassID:     p.ClassID,
+		MailAddress: u.Email,
 
 		IsAdmin:   false,
 		IsTeacher: false,

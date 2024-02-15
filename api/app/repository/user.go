@@ -19,11 +19,13 @@ type UserRepository interface {
 		*model.UserModel,
 		error,
 	)
+
 	GetTempUserByUid(uid string) (
 		*model.TempUserModel,
 		error,
 	)
 	InsertTempUser(tu model.TempUserModel) error
+	DeleteTempUserByUid(uid string) error
 }
 
 type userRepository struct {
@@ -121,6 +123,23 @@ func (ur *userRepository) InsertTempUser(tu model.TempUserModel) error {
 		Item:      av,
 	}); err != nil {
 		return fmt.Errorf("failed to put new temp_user: %v", err)
+	}
+
+	return nil
+}
+
+func (ur *userRepository) DeleteTempUserByUid(uid string) error {
+	// delete処理を実施
+	_, err := ur.db.C.DeleteItem(context.Background(), &dynamodb.DeleteItemInput{
+		TableName: aws.String("temp_users"),
+		Key: map[string]types.AttributeValue{
+			"firebase_id": &types.AttributeValueMemberS{
+				Value: uid,
+			},
+		},
+	})
+	if err != nil {
+		return err
 	}
 
 	return nil
