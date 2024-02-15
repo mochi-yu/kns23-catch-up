@@ -61,7 +61,7 @@ function AuthProvider({ children }: Props) {
         setSignInCheck(true);
       }
     });
-  });
+  }, [currentUser]);
 
   if (signInCheck) {
     return (
