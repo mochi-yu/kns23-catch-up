@@ -94,7 +94,6 @@ func (s *Server) setUpRouter() {
 	authGroup := needLoginGroup.Group("/auth")
 	authGroup.POST("", s.handler.User.PostAuth)
 	authGroup.GET("", s.handler.User.GetAuth)
-	authGroup.POST("/temp", s.handler.User.PostAuthTemp)
 
 	userGroup := needLoginGroup.Group("/users")
 	userGroup.GET("/", s.handler.User.GetUsers)
