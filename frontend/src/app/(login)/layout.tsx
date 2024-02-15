@@ -1,6 +1,6 @@
 import { Header } from "@/components/common/header/header";
 import { Footer } from "@/components/common/footer";
-import React from "react";
+import CheckLoginUser from "@/components/auth/check_login_user";
 
 interface Props {
   children: React.ReactNode;
@@ -9,9 +9,11 @@ interface Props {
 export default function LoginLayout({ children }: Props) {
   return (
     <>
-      <Header />
-      {children}
-      <Footer />
+      <CheckLoginUser>
+        <Header />
+        {children}
+        <Footer />
+      </CheckLoginUser>
     </>
   );
 }
