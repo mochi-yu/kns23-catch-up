@@ -39,6 +39,8 @@ func (la *LoginAuth) Check() gin.HandlerFunc {
 
 		// コンテキストにuser_infoを追加
 		ctx.Set("user_info", u.UserInfo)
+
+		ctx.Next()
 	}
 }
 
