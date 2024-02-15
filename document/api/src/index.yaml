@@ -19,9 +19,7 @@ paths:
 
   # ログインに関わるエンドポイント 
   '/auth':
-    $ref: './paths/auth/index.yaml'
-  '/auth/temp':
-    $ref: './paths/auth/temp.yaml'
+    $ref: './paths/auth.yaml'
 
   # ユーザに関わるエンドポイント 
   '/users':

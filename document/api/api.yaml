@@ -68,7 +68,9 @@ paths:
   /auth:
     post:
       summary: ユーザ登録を行う
-      description: 登録フォームからユーザの登録を行う時に使用する。
+      description: |
+        tempユーザを通常ユーザに登録する処理を行う。
+        登録したユーザをレスポンスする。
       operationId: create_new_user
       security:
         - loginAuth: []
@@ -83,14 +85,16 @@ paths:
               type: object
               properties:
                 user_id:
+                  description: ユーザID
+                  type: string
+                display_name:
+                  description: 表示名
                   type: string
                 user_name:
+                  description: ユーザ名
                   type: string
                 class_id:
-                  type: string
-                mail_address:
-                  type: string
-                firebase_id:
+                  description: クラスのID
                   type: string
       responses:
         '200':
@@ -98,16 +102,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  user_id:
-                    type: string
-                  user_name:
-                    type: string
-                  class_id:
-                    type: string
-                  mail_address:
-                    type: string
+                $ref: '#/components/schemas/User'
         '400':
           $ref: '#/components/responses/GenericError'
         '401':
@@ -124,52 +119,16 @@ paths:
         - User
       responses:
         '200':
-          description: ユーザ情報を返す。ただし、本登録が完了していないユーザについては、is_temp_userのパラメータがtrueになり、詳細なプロフィールの内容は入っていない。
+          description: |
+            ユーザ情報を返す。
+            初めてログインするユーザの場合は、トークンから必要情報を取得してtempユーザに追加する。
+            また、tempユーザの場合は、is_temp_userのパラメータがtrueになり、詳細なプロフィールの内容は記述されない。
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
           $ref: '#/components/responses/GenericError'
-  /auth/temp:
-    post:
-      summary: 一時ユーザとして登録
-      description: 一時ユーザとして登録を行う
-      operationId: add_temp_user
-      security:
-        - loginAuth: []
-      tags:
-        - User
-      requestBody:
-        description: 登録フォームの入力情報
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                mail_address:
-                  type: string
-                firebase_id:
-                  type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  mail_address:
-                    type: string
-                  firebase_id:
-                    type: string
-        '400':
-          $ref: '#/components/responses/GenericError'
-        '401':
-          $ref: '#/components/responses/ForbiddenError'
-        '403':
-          $ref: '#/components/responses/UnauthorizedError'
   /users:
     get:
       summary: ユーザ一覧を取得する

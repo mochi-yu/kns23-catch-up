@@ -1,0 +1,63 @@
+post:
+  summary: ユーザ登録を行う
+  description: |
+    tempユーザを通常ユーザに登録する処理を行う。
+    登録したユーザをレスポンスする。
+  operationId: 'create_new_user'
+  security:
+    - loginAuth: []
+  tags:
+    - User
+  requestBody:
+    description: 登録フォームの入力情報
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            user_id:
+              description: ユーザID
+              type: string
+            display_name:
+              description: 表示名
+              type: string
+            user_name:
+              description: ユーザ名
+              type: string
+            class_id:
+              description: クラスのID
+              type: string
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../index.yaml#/components/schemas/User"
+    '400':
+      $ref: '../index.yaml#/components/responses/GenericError'
+    '401':
+      $ref: '../index.yaml#/components/responses/ForbiddenError'
+    '403':
+      $ref: '../index.yaml#/components/responses/UnauthorizedError'
+get:
+  summary: ユーザの認証を行う
+  operationId: 'get_user_info'
+  description: ユーザの認証を行い、ユーザ情報を取得する
+  security:
+    - loginAuth: []
+  tags:
+    - User
+  responses:
+    '200':
+      description: |
+        ユーザ情報を返す。
+        初めてログインするユーザの場合は、トークンから必要情報を取得してtempユーザに追加する。
+        また、tempユーザの場合は、is_temp_userのパラメータがtrueになり、詳細なプロフィールの内容は記述されない。
+      content:
+        application/json:
+          schema:
+            $ref: "../index.yaml#/components/schemas/User"
+    '400':
+      $ref: '../index.yaml#/components/responses/GenericError'
