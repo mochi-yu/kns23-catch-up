@@ -55,6 +55,9 @@ function AuthProvider({ children }: Props) {
 
         setSignInCheck(true);
       } else {
+        // ログアウトの状態では、各stateをundefineにする
+        setCurrentUser(undefined);
+        setUserInfo(undefined);
         setSignInCheck(true);
       }
     });
