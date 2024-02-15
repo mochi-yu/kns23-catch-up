@@ -7,9 +7,9 @@ import Slide from "@mui/material/Slide";
 import AppBar from "@mui/material/AppBar";
 import { useScrollTrigger } from "@mui/material";
 import { SearchBox } from "./search_box";
-import { NewPostButton } from "@/components/new_post_button";
-import { AccountButton } from "@/components/account_button";
-import { NotifyButton } from "@/components/notify_button";
+import { NewPostButton } from "@/components/common/button/new_post";
+import { AccountButton } from "@/components/common/button/account";
+import { NotifyButton } from "@/components/common/button/notify";
 
 interface Props {
   window?: () => Window;

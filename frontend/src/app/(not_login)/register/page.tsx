@@ -1,5 +1,5 @@
 import CheckNotRegister from "@/components/auth/check_not_register";
-import { LogoutButton } from "@/components/common/button_logout";
+import { LogoutButton } from "@/components/common/button/logout";
 import { Typography } from "@mui/material";
 
 export default function RegisterPage() {
