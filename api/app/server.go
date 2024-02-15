@@ -75,14 +75,12 @@ func NewServer() *Server {
 	}
 
 	// ルーティングを定義
-	s.setUpRouter(s3Client)
+	s.setUpRouter()
 
 	return s
 }
 
-func (s *Server) setUpRouter(
-	s3Client infrastructure.S3Client,
-) {
+func (s *Server) setUpRouter() {
 	// ルーティングの定義
 	// ログインを必要としないエンドポイント
 	v1Group := s.Engine.Group("/v1")
