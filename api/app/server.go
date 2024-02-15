@@ -23,7 +23,7 @@ type Server struct {
 func NewServer() *Server {
 	r := gin.Default()
 
-	// ここからCorsの設定
+	// corsの設定
 	r.Use(cors.New(cors.Config{
 		// アクセスを許可したいアクセス元
 		AllowOrigins: []string{"*"},
@@ -92,8 +92,8 @@ func (s *Server) setUpRouter() {
 	needLoginGroup.Use(s.middleware.LoginAuth.Check())
 
 	authGroup := needLoginGroup.Group("/auth")
-	authGroup.POST("/", s.handler.User.PostAuth)
-	authGroup.GET("/", s.handler.User.GetAuth)
+	authGroup.POST("", s.handler.User.PostAuth)
+	authGroup.GET("", s.handler.User.GetAuth)
 	authGroup.POST("/temp", s.handler.User.PostAuthTemp)
 
 	userGroup := needLoginGroup.Group("/users")
