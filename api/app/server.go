@@ -17,12 +17,13 @@ type Server struct {
 	repository *repository.Repository
 	usecase    *usecase.UseCase
 	handler    *handler.Handler
+	middleware *middleware.Middleware
 }
 
 func NewServer() *Server {
 	r := gin.Default()
 
-	// ここからCorsの設定
+	// corsの設定
 	r.Use(cors.New(cors.Config{
 		// アクセスを許可したいアクセス元
 		AllowOrigins: []string{"*"},
@@ -43,6 +44,9 @@ func NewServer() *Server {
 
 	// S3の初期化
 	s3Client := infrastructure.NewS3Client()
+
+	// firebaseの初期化
+	firebaseCLient := infrastructure.NewFirebaseClient()
 
 	// repositoryを初期化
 	s.repository = &repository.Repository{
@@ -65,27 +69,33 @@ func NewServer() *Server {
 		User:   handler.NewUserHandler(s.usecase.User),
 	}
 
+	// ミドルウェアを初期化
+	s.middleware = &middleware.Middleware{
+		LoginAuth: *middleware.NewLoginAuthMiddleware(firebaseCLient),
+	}
+
 	// ルーティングを定義
-	s.setUpRouter(s3Client)
+	s.setUpRouter()
 
 	return s
 }
 
-func (s *Server) setUpRouter(
-	s3Client infrastructure.S3Client,
-) {
+func (s *Server) setUpRouter() {
 	// ルーティングの定義
 	// ログインを必要としないエンドポイント
 	v1Group := s.Engine.Group("/v1")
 	v1Group.GET("/health", s.handler.Health.IndexGet)
 	v1Group.POST("/health", s.handler.Health.IndexPost)
-	v1Group.POST("/register", s.handler.User.RegisterPost)
 
 	// ログインが必要なグループ
-	authGroup := v1Group.Group("/")
-	authGroup.Use(middleware.LoginAuth())
+	needLoginGroup := v1Group.Group("/")
+	needLoginGroup.Use(s.middleware.LoginAuth.Check())
 
-	userGroup := authGroup.Group("/users")
+	authGroup := needLoginGroup.Group("/auth")
+	authGroup.POST("", s.handler.User.PostAuth)
+	authGroup.GET("", s.handler.User.GetAuth)
+
+	userGroup := needLoginGroup.Group("/users")
 	userGroup.GET("/", s.handler.User.GetUsers)
 	userGroup.GET("/{user_id}", s.handler.User.GetByUserID)
 	userGroup.PUT("/{user_id}", s.handler.User.PutByUserID)
@@ -93,7 +103,7 @@ func (s *Server) setUpRouter(
 	userGroup.GET("/{user_id}/reactions", s.handler.User.GetUserReactions)
 	userGroup.GET("/{user_id}/comments", s.handler.User.GetUserComments)
 
-	postGroup := authGroup.Group("/posts")
+	postGroup := needLoginGroup.Group("/posts")
 	postGroup.GET("/", s.handler.Post.GetPosts)
 	postGroup.POST("/", s.handler.Post.PostNewPost)
 	postGroup.GET("/{post_id}", s.handler.Post.GetPostByPostID)

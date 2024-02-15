@@ -7,10 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mochi-yu/kns23-catch-up/app/model"
 	"github.com/mochi-yu/kns23-catch-up/app/usecase"
+	"github.com/mochi-yu/kns23-catch-up/app/util"
 )
 
 type UserHandler interface {
-	RegisterPost(c *gin.Context)
+	PostAuth(c *gin.Context)
+	GetAuth(c *gin.Context)
 	GetUsers(c *gin.Context)
 	GetByUserID(c *gin.Context)
 	PutByUserID(c *gin.Context)
@@ -27,9 +29,17 @@ func NewUserHandler(uu usecase.UserUseCase) UserHandler {
 	return &userHandler{uu: uu}
 }
 
-func (uh *userHandler) RegisterPost(c *gin.Context) {
+func (uh *userHandler) PostAuth(c *gin.Context) {
+	// ユーザ情報を取得
+	u, err := util.GetUserInfoFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.Abort()
+		return
+	}
+
 	// パラメータを取得する
-	requestParam := model.RegisterPostParam{}
+	requestParam := model.RegisterPostRequest{}
 	if err := c.BindJSON(&requestParam); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		c.Abort()
@@ -37,13 +47,12 @@ func (uh *userHandler) RegisterPost(c *gin.Context) {
 
 	// パラメータのバリデーション
 	if requestParam.UserID == "" || requestParam.DisplayName == "" ||
-		requestParam.UserName == "" || requestParam.MailAddress == "" ||
-		requestParam.ClassID == "" {
+		requestParam.UserName == "" || requestParam.ClassID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "パラメータの値が不足しています。"})
 	}
 
-	// メインの処理
-	err := uh.uu.RegisterPost(requestParam)
+	// メインの処理を実施
+	userInfo, err := uh.uu.PostAuth(u, requestParam)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
@@ -51,12 +60,30 @@ func (uh *userHandler) RegisterPost(c *gin.Context) {
 	}
 
 	// レスポンスを返す
-	response := model.RegisterPostResponse{
-		UserID:      requestParam.UserID,
-		DisplayName: requestParam.DisplayName,
-		ClassID:     requestParam.ClassID,
-		MailAddress: requestParam.MailAddress,
+	response := model.UserModel2UserResponse(userInfo, false)
+	c.JSON(http.StatusOK, response)
+}
+
+func (uh *userHandler) GetAuth(c *gin.Context) {
+	// ユーザ情報を取得
+	u, err := util.GetUserInfoFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.Abort()
+		return
 	}
+
+	// メインの処理を実施
+	userInfo, isTempUser, err := uh.uu.GetAuth(u)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.Abort()
+		return
+	}
+
+	// レスポンスを返す
+	response := model.UserModel2UserResponse(userInfo, isTempUser)
 	c.JSON(http.StatusOK, response)
 }
 

@@ -11,12 +11,12 @@
 erDiagram
   %% モデル
   users {
-    varchar user_id PK "ユーザID"
+    varchar firebase_id PK "Firebase上でのユーザID"
+    varchar user_id "ユーザID"
     varchar display_name "ユーザ名(表示名)"
     varchar user_name "氏名"
     bigint class_id FK "所属クラス"
     varchar mail_address "登録メールアドレス"
-    varchar firebase_id "Firebase上でのユーザID"
 
     bool is_admin "管理者フラグ"
     bool is_teacher "先生かどうか（未使用）"

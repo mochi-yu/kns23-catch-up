@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Inter } from "next/font/google";
-import { Header } from "@/components/common/header/header";
-import { Footer } from "@/components/common/footer";
 import CssBaseline from "@mui/material/CssBaseline";
 import { MetadataDynamic } from "@/components/metadata_dynamic";
+import { AuthProvider } from "@/contexts/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,10 +32,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
 
         <body className={inter.className} style={{ backgroundColor: "#E0E2EC" }}>
+          {/* CssBaselineでデフォルトのCSSをリセットする */}
           <CssBaseline />
-          <Header />
-          {children}
-          <Footer />
+
+          <AuthProvider>{children}</AuthProvider>
         </body>
       </html>
     </>
