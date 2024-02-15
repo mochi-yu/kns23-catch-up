@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Inter } from "next/font/google";
 import CssBaseline from "@mui/material/CssBaseline";
 import { MetadataDynamic } from "@/components/metadata_dynamic";
+import { AuthProvider } from "@/contexts/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* CssBaselineでデフォルトのCSSをリセットする */}
           <CssBaseline />
 
-          {children}
+          <AuthProvider>{children}</AuthProvider>
         </body>
       </html>
     </>
