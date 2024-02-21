@@ -6,6 +6,7 @@ init-dev:
 	aws-vault exec $(AWS_ACCOUNT_NAME) -- terraform init \
 	-backend-config=bucket="$(TF_BACKEND_BUCKET_DEV)" \
 	-backend-config=key="$(TF_BUCKEND_KEY_DEV)" \
+	-migrate-state
 
 plan-dev:
 	cd environments/dev && \
