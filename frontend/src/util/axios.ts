@@ -13,9 +13,14 @@ export async function GetWithLogin(path: string): Promise<any> {
 
   const idToken = await auth.currentUser.getIdToken();
 
-  return await instance.get(path, {
-    headers: { Authorization: "Bearer " + idToken },
-  });
+  return await instance
+    .get(path, {
+      headers: { Authorization: "Bearer " + idToken },
+    })
+    .then((res) => {
+      const { data } = res;
+      return data;
+    });
 }
 
 export async function PostWithLogin(path: string, data: any): Promise<any> {
