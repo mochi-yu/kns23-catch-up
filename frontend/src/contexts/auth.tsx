@@ -1,12 +1,11 @@
 "use client";
 
-import { createContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useEffect, useState, ReactNode, Dispatch, SetStateAction } from "react";
 import { auth } from "@/lib/firebase/firebase";
 import { User } from "firebase/auth";
 import { Loading } from "@/components/common/loading";
 import { UserModel } from "@/model/user";
-import axios from "@/util/axios";
-import { AxiosResponse } from "axios";
+import { GetWithLogin } from "@/util/axios";
 
 type AuthContextProps = {
   currentUser: User | null | undefined;
@@ -18,6 +17,13 @@ const AuthContext = createContext<AuthContextProps>({
   currentUser: undefined,
   userInfo: undefined,
   signInCheck: false,
+});
+
+type SetUserInfoContextProps = {
+  setUserInfo: Dispatch<SetStateAction<UserModel | undefined>>;
+};
+const SetUserInfoContext = createContext<SetUserInfoContextProps>({
+  setUserInfo: () => undefined,
 });
 
 interface Props {
@@ -40,17 +46,7 @@ function AuthProvider({ children }: Props) {
         const idToken = await currentUser?.getIdToken();
         if (!idToken) return;
 
-        const userInfo = await axios
-          .get("/auth", {
-            headers: { Authorization: "Bearer " + idToken },
-          })
-          .then((res: AxiosResponse<UserModel>) => {
-            const { data } = res;
-            return data;
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+        const userInfo = (await GetWithLogin("/auth")) as UserModel;
         setUserInfo(userInfo!);
 
         setSignInCheck(true);
@@ -66,7 +62,9 @@ function AuthProvider({ children }: Props) {
   if (signInCheck) {
     return (
       <AuthContext.Provider value={{ currentUser, userInfo, signInCheck }}>
-        {children}
+        <SetUserInfoContext.Provider value={{ setUserInfo }}>
+          {children}
+        </SetUserInfoContext.Provider>
       </AuthContext.Provider>
     );
   } else {
@@ -76,4 +74,4 @@ function AuthProvider({ children }: Props) {
   }
 }
 
-export { AuthContext, AuthProvider };
+export { AuthContext, SetUserInfoContext, AuthProvider };
