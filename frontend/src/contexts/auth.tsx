@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useEffect, useState, ReactNode, Dispatch, SetStateAction } from "react";
 import { auth } from "@/lib/firebase/firebase";
 import { User } from "firebase/auth";
 import { Loading } from "@/components/common/loading";
@@ -18,6 +18,13 @@ const AuthContext = createContext<AuthContextProps>({
   currentUser: undefined,
   userInfo: undefined,
   signInCheck: false,
+});
+
+type SetUserInfoContextProps = {
+  setUserInfo: Dispatch<SetStateAction<UserModel | undefined>>;
+};
+const SetUserInfoContext = createContext<SetUserInfoContextProps>({
+  setUserInfo: () => undefined,
 });
 
 interface Props {
@@ -66,7 +73,9 @@ function AuthProvider({ children }: Props) {
   if (signInCheck) {
     return (
       <AuthContext.Provider value={{ currentUser, userInfo, signInCheck }}>
-        {children}
+        <SetUserInfoContext.Provider value={{ setUserInfo }}>
+          {children}
+        </SetUserInfoContext.Provider>
       </AuthContext.Provider>
     );
   } else {
@@ -76,4 +85,4 @@ function AuthProvider({ children }: Props) {
   }
 }
 
-export { AuthContext, AuthProvider };
+export { AuthContext, SetUserInfoContext, AuthProvider };
