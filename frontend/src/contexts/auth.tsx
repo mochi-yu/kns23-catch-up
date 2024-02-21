@@ -5,8 +5,7 @@ import { auth } from "@/lib/firebase/firebase";
 import { User } from "firebase/auth";
 import { Loading } from "@/components/common/loading";
 import { UserModel } from "@/model/user";
-import axios from "@/util/axios";
-import { AxiosResponse } from "axios";
+import { GetWithLogin } from "@/util/axios";
 
 type AuthContextProps = {
   currentUser: User | null | undefined;
@@ -47,17 +46,7 @@ function AuthProvider({ children }: Props) {
         const idToken = await currentUser?.getIdToken();
         if (!idToken) return;
 
-        const userInfo = await axios
-          .get("/auth", {
-            headers: { Authorization: "Bearer " + idToken },
-          })
-          .then((res: AxiosResponse<UserModel>) => {
-            const { data } = res;
-            return data;
-          })
-          .catch((e) => {
-            console.log(e);
-          });
+        const userInfo = (await GetWithLogin("/auth")) as UserModel;
         setUserInfo(userInfo!);
 
         setSignInCheck(true);

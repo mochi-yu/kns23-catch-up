@@ -35,5 +35,3 @@ export async function PostWithLogin(path: string, data: any): Promise<any> {
       console.log(e);
     });
 }
-
-export default instance;
