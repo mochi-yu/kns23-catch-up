@@ -11,6 +11,10 @@
 		{
 			"name": "バックエンド",
 			"path": "api"
+		},
+		{
+			"name": "infra",
+			"path": "infra"
 		}
 	],
 	"settings": {}
