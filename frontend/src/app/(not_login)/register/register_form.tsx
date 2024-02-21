@@ -1,14 +1,21 @@
 "use client";
 
-import { AuthContext } from "@/contexts/auth";
+import { AuthContext, SetUserInfoContext } from "@/contexts/auth";
 import { Button, FormHelperText, MenuItem, Stack, TextField } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import { PostWithLogin } from "@/util/axios";
+import { UserModel } from "@/model/user";
+import { Loading } from "@/components/common/loading";
+import { useRouter } from "next/navigation";
 
 export const ClassList = ["23A", "23B", "23C", "23D", "23E", "23F", "23G", "23H", "23J"];
 
 export function RegisterForm() {
   const { currentUser } = useContext(AuthContext);
+  const { setUserInfo } = useContext(SetUserInfoContext);
+  const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [userID, setUserID] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [userName, setUserName] = useState("");
@@ -22,33 +29,41 @@ export function RegisterForm() {
   }, [currentUser]);
 
   function onUserIDChange(e: any) {
-    console.log(e);
     setUserID(e.target.value);
   }
   function onDisplayNameChange(e: any) {
-    console.log(e);
     setDisplayName(e.target.value);
   }
   function onUserNameChange(e: any) {
-    console.log(e);
     setUserName(e.target.value);
   }
   function onClassIDChange(e: any) {
-    console.log(e);
     setClassID(e.target.value);
   }
 
-  function onSubmit() {
+  async function onSubmit() {
     if (userID == "" || displayName == "" || userName == "" || classID == "") {
       console.log("invalid param.");
       return;
     } else {
-      console.log("submit.");
+      setIsLoading(true);
+
+      const reqParam = {
+        user_id: userID,
+        display_name: displayName,
+        user_name: userName,
+        class_id: classID,
+      };
+
+      const userInfo = (await PostWithLogin("/auth", reqParam)) as UserModel;
+      setUserInfo(userInfo);
+      setIsLoading(false);
     }
   }
 
   return (
     <>
+      <Loading open={isLoading} />
       <Stack margin='20px' spacing={2}>
         <TextField
           variant='outlined'
