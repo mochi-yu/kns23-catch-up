@@ -36,3 +36,11 @@ provider "aws" {
     }
   }
 }
+
+module "api" {
+  source = "../../modules/api"
+}
+
+module "database" {
+  source = "../../modules/database"
+}
