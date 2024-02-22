@@ -1,5 +1,6 @@
 locals {
   product_name = "kns23_catch_up"
+  env = "dev"
 }
 
 # tfstateをS3で管理する
@@ -31,7 +32,7 @@ provider "aws" {
   region = "ap-northeast-1"
   default_tags {
     tags = {
-      env     = "${stg}"
+      env = "${local.env}"
       service = "${local.product_name}"
     }
   }
@@ -39,6 +40,9 @@ provider "aws" {
 
 module "api" {
   source = "../../modules/api"
+
+  product_name = "${local.product_name}"
+  env = "${local.env}"
 }
 
 module "database" {
